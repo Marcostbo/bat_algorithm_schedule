@@ -299,7 +299,7 @@ class Leitura(object):
                 D = np.asarray(rfo_pdf[tb][mes])
                 N = len(D)
                 sorteios_mes = []
-                mu, sigma = dias_RFO[mes][tb], dias_RFO[mes][tb] * 0.3
+                mu, sigma = dias_RFO[mes][tb], dias_RFO[mes][tb] * 0.0
                 s = np.random.normal(mu, sigma, 1)
                 aux_RFO = abs(int(s))
                 if mes == 0:

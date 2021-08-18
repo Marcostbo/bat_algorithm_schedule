@@ -1,6 +1,7 @@
 import numpy as np
 import random
 from Agenda_OTM import Optimize_Operation
+import copy
 
 
 class BatAlgorithm(object):
@@ -60,8 +61,14 @@ class BatAlgorithm(object):
             for day in range(self.n_days):
                 if self.possible_days[ug, day] == 0:
                     list_of_days.append(day)
-
-            dict_of_days[ug] = list_of_days
+            #lim_1 = 120 + maintenance_round*20
+            lim_1 = 160 - maintenance_round*7
+            lim_2 = 60
+            filter_1 = [x for x in list_of_days if lim_1 <= x]
+            filter_2 = [x for x in list_of_days if lim_2 >= x]
+            dict_of_days[ug] = filter_2 + filter_1
+            if not dict_of_days[ug]:
+                dict_of_days[ug] = list_of_days
 
         # Initialize heuristic individuals
         self.dict_of_days = dict_of_days
@@ -84,7 +91,10 @@ class BatAlgorithm(object):
         self.start_individuals = individuals
 
     @staticmethod
-    def check_bat_bounds(n_ug, current_bat, upper_lim, lower_lim, dict_of_days):
+    def check_bat_bounds(n_ug, current_bat, upper_lim, lower_lim, dict_of_days, maintenance_round):
+        limbo_min = 60
+        # limbo_max = 120 + maintenance_round*20
+        limbo_max = 160 - maintenance_round*7
         for ug in range(n_ug):
             days = dict_of_days[ug]
             if current_bat[ug] > upper_lim[ug]:
@@ -92,6 +102,10 @@ class BatAlgorithm(object):
 
             if current_bat[ug] < lower_lim:
                 current_bat[ug] = lower_lim
+
+            if limbo_min < current_bat[ug] < limbo_max:
+                limbo_list = [limbo_min, limbo_max]
+                current_bat[ug] = min(limbo_list, key=lambda x: abs(x - current_bat[ug]))
 
             if int(current_bat[ug]) not in days:
                 array = np.asarray(days)
@@ -101,14 +115,15 @@ class BatAlgorithm(object):
 
         return current_bat
 
-    def bat_algorithm_process(self, uhe_data, previous_calendar, vt_data, n_gen, alpha, lbd, n_ind):
+    def bat_algorithm_process(self, uhe_data, previous_calendar, vt_data, n_gen, alpha, lbd, n_ind, maintenance_round):
 
         ind_size = self.n_ug  # individual size
         pop_size = n_ind      # denotes population size,
 
         t = 1                                     # iteration count
         a_loud = np.ones(pop_size)                # initial loudness
-        r = (1 - np.exp(-lbd * t)) * a_loud       # initial pulse rates
+        #r = (1 - np.exp(-lbd * t)) * a_loud       # initial pulse rates
+        r = 0 * a_loud  # initial pulse rates
         v = np.zeros(shape=(pop_size, ind_size))  # initial speeds
 
         lower_lim = 0
@@ -120,7 +135,7 @@ class BatAlgorithm(object):
             upper_lim.append(self.n_days - current_maintenance[ug])
 
         fobs = []
-        individuals = self.start_individuals
+        individuals = copy.deepcopy(self.start_individuals)
         for individual in individuals.values():
             defined_calendar = individual['calendar']
             agenda = Optimize_Operation(uhe_data, vt_data, calendar=defined_calendar,
@@ -133,70 +148,70 @@ class BatAlgorithm(object):
         best_bat = individuals[best_bat_idx]['start_days']
         best_bat = np.asarray(best_bat)
 
-        best_fob_result = []
-        best_bat_result = []
+        self.evolution = [best_fob]
+        t = 1
+        while t <= n_gen:
+            print('----------- Generation %i -----------' % t)
+            for ind in range(pop_size):
 
-        for bat_round in range(1):
-            self.evolution = [best_fob]
-            t = 1
-            while t <= n_gen:
-                print('----------- Generation %i -----------' % t)
-                for ind in range(pop_size):
+                # update bat
 
-                    # update bat
+                beta = np.random.random()
+                bat = np.asarray(individuals[ind]['start_days'])
+                v[ind, :] = v[ind, :] + (best_bat - bat) * beta
+                current_bat = bat + v[ind, :]
 
-                    beta = np.random.random()
-                    bat = np.asarray(individuals[ind]['start_days'])
-                    v[ind, :] = v[ind, :] + (best_bat - bat) * beta
-                    current_bat = bat + v[ind, :]
+                # local search
 
-                    # local search
+                rand = np.random.random()
+                if rand < r[ind]:
+                    e = np.ones(ind_size) * np.random.random()
+                    current_bat = best_bat + e * a_loud[ind]
 
-                    rand = np.random.random()
-                    if rand < r[ind]:
-                        e = np.ones(ind_size) * np.random.uniform(-1, 1)
-                        current_bat = best_bat + e * a_loud[ind]
+                # verify lower and upper violations
 
-                    # verify lower and upper violations
+                current_bat = self.check_bat_bounds(n_ug=self.n_ug, current_bat=current_bat,
+                                                    upper_lim=upper_lim, lower_lim=lower_lim,
+                                                    dict_of_days=self.dict_of_days, maintenance_round=maintenance_round)
 
-                    current_bat = self.check_bat_bounds(n_ug=self.n_ug, current_bat=current_bat,
-                                                        upper_lim=upper_lim, lower_lim=lower_lim,
-                                                        dict_of_days=self.dict_of_days)
+                # global search
 
-                    # global search
+                bat = np.round(current_bat)  # round to the next integer - in the future use sigmoid instead
+                bat_calendar = np.zeros(shape=(self.n_ug, self.n_days))
 
-                    bat = np.round(current_bat)  # round to the next integer - in the future use sigmoid instead
-                    bat_calendar = np.zeros(shape=(self.n_ug, self.n_days))
+                for ug in range(self.n_ug):
+                    maintenance = int(current_maintenance[ug])
+                    start_day = int(bat[ug])
+                    bat_calendar[ug, start_day:start_day + maintenance] = 1
 
-                    for ug in range(self.n_ug):
-                        maintenance = int(current_maintenance[ug])
-                        start_day = int(random.choice(bat))
-                        bat_calendar[ug, start_day:start_day + maintenance] = 1
+                agenda = Optimize_Operation(uhe_data, vt_data, calendar=bat_calendar,
+                                            previous_calendar=previous_calendar, n_days=self.n_days, n_ug=self.n_ug)
 
-                    agenda = Optimize_Operation(uhe_data, vt_data, calendar=bat_calendar,
-                                                previous_calendar=previous_calendar, n_days=self.n_days, n_ug=self.n_ug)
+                if 2 in agenda.full_operation:
+                    current_fob = 10e10
+                else:
                     current_fob = sum(agenda.Vertido)
 
-                    # update bat parameters
+                # update bat parameters
 
-                    rand = np.random.random()
-                    if rand < a_loud[ind] and current_fob <= fobs[ind]:
-                        individuals[ind]['start_days'] = current_bat
-                        r[ind] = (1 - np.exp(-lbd * t))
-                        a_loud[ind] = alpha * a_loud[ind]
+                rand = np.random.random()
+                if rand < a_loud[ind] and current_fob <= fobs[ind]:
+                    individuals[ind]['start_days'] = current_bat
+                    r[ind] = (1 - np.exp(-lbd * t))
+                    a_loud[ind] = alpha * a_loud[ind]
 
-                    # verify and update the new best fob
+                # verify and update the new best fob
 
-                    if current_fob < best_fob:
-                        best_fob = current_fob
-                        best_bat = current_bat
+                if current_fob < best_fob:
+                    best_fob = current_fob
+                    best_bat = current_bat
 
-                self.evolution.append(best_fob)
-                t += 1
+            self.evolution.append(best_fob)
+            t += 1
 
-            best_fob_result = best_fob
-            best_bat_result = np.round(best_bat)
-            print('-------------------------------------')
+        best_fob_result = best_fob
+        best_bat_result = np.round(best_bat)
+        print('-------------------------------------')
 
         self.best_fob_result = best_fob_result
         self.best_bat_result = best_bat_result

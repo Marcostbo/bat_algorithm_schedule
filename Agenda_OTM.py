@@ -23,6 +23,7 @@ class Otimizacao(object):
         Num_Turbinas = 50
 
         self.n_rodadas = duracao_manutencao.shape[1]
+        self.n_rodadas = 1
         N_Rodadas = self.n_rodadas
 
         agenda_ofi = np.zeros(shape=(Num_Turbinas, Num_Dias))
@@ -198,6 +199,7 @@ class Optimize_Operation(object):
         self.Agenda = None
         self.Vertido = None
         self.Turbinado = None
+        self.full_operation = None
         self.flag_out = 0
         self.n_days = n_days
         self.n_ug = n_ug
@@ -312,7 +314,7 @@ class Optimize_Operation(object):
                             A[tb, t] = 1
                             VT[t] = VT[t] + vt_aju
                             break
-
+            self.full_operation = A
             self.Operacao = Operacao
             self.Agenda = Agenda
             self.Vertido = VV
@@ -342,29 +344,22 @@ class Optimize_Operation(object):
             problema.turb.add(expr=sum(problema.x[tb, t] * vt_UG[tb][t] for tb in TB) + problema.vv[t] == v_afl[t])
 
         # Adiciona Limitação de Operação - Agenda do Bat Atual
-        problema.otim_ag = pyo.ConstraintList()
-
-        for tb in TB:
-            for t in T:
-                t = int(t)
-                if agenda_def[tb, t] == 1:
-                    problema.otim_ag.add(expr=agenda_def[tb, t] + problema.x[tb, t] == 1)
-
-        # Adiciona Limitação de Operação - Agenda dos Bats Passados
-        problema.otim_prev = pyo.ConstraintList()
-
-        for tb in TB:
-            for t in T:
-                t = int(t)
-                if agenda_prev[tb, t] == 1:
-                    problema.otim_prev.add(expr=agenda_prev[tb, t] + problema.x[tb, t] == 1)
-
         # Adiciona Limitação de Operação - RFO + DFO
+        # Adiciona Limitação de Operação - Agenda dos Bats Passados
+
+        problema.otim_ag = pyo.ConstraintList()
+        problema.otim_prev = pyo.ConstraintList()
         problema.otim_rfo = pyo.ConstraintList()
 
         for tb in TB:
             for t in T:
                 t = int(t)
+                if int(agenda_def[tb, t]) == 1:
+                    problema.otim_ag.add(expr=int(agenda_def[tb, t]) + problema.x[tb, t] == 1)
+
+                if agenda_prev[tb, t] == 1:
+                    problema.otim_prev.add(expr=agenda_prev[tb, t] + problema.x[tb, t] == 1)
+
                 if agenda_rfo[tb, t] == 1:
                     problema.otim_rfo.add(expr=agenda_rfo[tb, t] + problema.x[tb, t] == 1)
 

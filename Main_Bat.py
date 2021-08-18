@@ -41,13 +41,13 @@ maintenance_duration = UHE_Data.dr_man
 n_ug = 50         # number of generating units
 n_days = 365      # number of days
 ind_size = n_ug   # individual size
-n_ind = 20        # denotes population size,
-n_gen = 2         # denotes number of generations (iterations),
+n_ind = 10        # denotes population size,
+n_gen = 4         # denotes number of generations (iterations),
 
 alpha = 0.6   # sound wave amplitude decrease rate
 lbd = 0.1     # sound wave pulse emission increase rate
 
-n_rounds = 8
+n_rounds = 4
 maintenance_result = np.zeros(shape=(n_ug, n_rounds))
 defined_calendar = np.zeros(shape=(n_ug, n_days))
 
@@ -60,7 +60,7 @@ for current_round in range(n_rounds):
 
     start = timeit.default_timer()
     Bat.bat_algorithm_process(uhe_data=UHE_Data, previous_calendar=defined_calendar, vt_data=VT_Data,
-                              n_gen=n_gen, alpha=alpha, lbd=lbd, n_ind=n_ind)
+                              n_gen=n_gen, alpha=alpha, lbd=lbd, n_ind=n_ind, maintenance_round=current_round)
 
     stop = timeit.default_timer()
     time = stop - start
