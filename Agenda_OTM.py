@@ -13,7 +13,6 @@ class Otimizacao(object):
         self.Agenda = None
         self.Vertido = None
         self.Turbinado = None
-
         self.n_rodadas = None
 
         self.multi_rodadas(Dados_UHE.vaz_afl, Dados_UHE.dr_man, Dados_UHE.rfo_dia, Dados_VT.vt_max)
