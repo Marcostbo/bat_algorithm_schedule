@@ -5,6 +5,8 @@ from Display_Resultados import plota_Agenda
 from Agenda_OTM import Otimizacao
 from Display_Resultados import plota_Agenda
 from Simula_FID import Calculo_Indicadores
+import matplotlib.pyplot as plt
+import numpy as np
 import timeit
 import os
 
@@ -23,6 +25,7 @@ path_pdf = main_path + '/Data_Mining_SAMUG_SMC.xlsx'
 
 UHE_Data = Leitura(path_vazao=path_hydrology, path_manutencao=path_maintenance,
                    path_rfo=path_rfo, path_pdf=path_pdf, calendario_def=None)
+UHE_Data.rfo_dia = np.zeros(shape=(50, 365))
 
 print('- Files Reading Completed')
 
@@ -54,3 +57,28 @@ plota_Agenda(Agenda.Turbinado, Agenda.Vertido, UHE_Data.vaz_afl, Agenda.Operacao
 # HDF and HDP indexes
 
 Indexes = Calculo_Indicadores(Agenda, UHE_Data, VT_Data)
+
+x = np.arange(1, 13, 1)
+plt.figure()
+plt.bar(x, Indexes.HDF_mes, color='blue')
+plt.title('Projeção de HDF')
+plt.xlabel('Mês')
+plt.ylabel('HDF')
+plt.show()
+
+plt.figure()
+plt.bar(x, Indexes.HDP_mes, color='orange')
+plt.title('Projeção de HDP')
+plt.xlabel('Mês')
+plt.ylabel('HDP')
+plt.show()
+
+start_days = np.zeros(50)
+
+for ug in range(50):
+    for day in range(365):
+        daily_agenda = int(Agenda.Agenda[ug, day])
+        if daily_agenda == 1:
+            print(ug)
+            start_days[ug] = day
+            break

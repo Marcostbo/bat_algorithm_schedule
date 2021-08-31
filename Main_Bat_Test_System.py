@@ -1,7 +1,7 @@
 import numpy as np
 from dataclasses import dataclass
 import timeit
-from bat_algorithm import BatAlgorithm
+from meta_heuristics import BatAlgorithm
 from Agenda_OTM import Optimize_Operation
 
 # Case test data
