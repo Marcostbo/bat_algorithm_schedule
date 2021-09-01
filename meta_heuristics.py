@@ -13,9 +13,10 @@ class MetaHeuristics(object):
         self.possible_days = None
         self.dict_of_days = None
 
+        self.best_individual = None
         self.best_fob_result = None
         self.best_bat_result = None
-        self.evolution = None
+        self.best_individual_evolution = []
 
         self.n_ug = n_ug
         self.n_days = n_days
@@ -25,7 +26,7 @@ class MetaHeuristics(object):
         self.initialize_individual(uhe_data=uhe_data, previous_calendar=previous_calendar, n_ind=n_ind)
 
     def initialize_individual(self, uhe_data, previous_calendar, n_ind):
-
+        print('Building initial individual...')
         dict_of_days = {}
         maintenance_round = self.current_round
         current_maintenance = self.maintenance_duration[:, maintenance_round]
@@ -63,10 +64,10 @@ class MetaHeuristics(object):
                     list_of_days.append(day)
 
             lim_1 = 150
-            lim_2 = 30
+            lim_2 = 40
             filter_1 = [x for x in list_of_days if lim_1 <= x]
-            # filter_2 = [x for x in list_of_days if lim_2 >= x]
-            filter_2 = []
+            filter_2 = [x for x in list_of_days if lim_2 >= x]
+            # filter_2 = []
             dict_of_days[ug] = filter_2 + filter_1
             if not dict_of_days[ug]:
                 dict_of_days[ug] = list_of_days
@@ -97,8 +98,8 @@ class MetaHeuristics(object):
         # march: 60 to 90
         # april: 90 to 120
         # may: 120 to 150
-        limbo_min = 30
-        limbo_max = 150
+        limbo_min = 40
+        limbo_max = 120
         for ug in range(n_ug):
             days = dict_of_days[ug]
             if current_bat[ug] > upper_lim[ug]:
@@ -118,6 +119,128 @@ class MetaHeuristics(object):
                 current_bat[ug] = array[idx]
 
         return current_bat
+
+    def ant_colony_optimization(self, uhe_data, vt_data, n_gen, n_ind, n_lost, rho,
+                                original_operation, original_spill):
+
+        # Apply improvement to ant_colony?
+        improvement = True
+
+        # Ant Colony Optimization (ACO)
+
+        # ACO input data
+        ind_size = self.n_ug  # individual size
+        pop_size = n_ind      # denotes population size
+
+        individuals = copy.deepcopy(self.start_individuals)  # deep copy from original individuals
+
+        n_iter = n_gen
+        n_days = self.n_days
+        n_ug = self.n_ug
+        pheromone_matrix = np.zeros(shape=(n_days, n_ug))
+        fobs = np.zeros(pop_size)
+        best_fobs = np.zeros(n_iter)
+
+        iteration = 0
+
+        # system input data
+        inflow = uhe_data.vaz_afl
+        current_maintenance = self.maintenance_duration[:, self.current_round]
+        print('Starting Ant Colony Optimization...')
+        while iteration < n_iter:
+            print('----------- Iteration %i -----------' % (iteration + 1))
+
+            # evaluate each individual
+            for ind, individual in individuals.items():  # TODO: Can be parallel
+                start_days = individual['start_days']
+                operation = copy.deepcopy(original_operation)
+                spilled = copy.deepcopy(original_spill)
+
+                individual_spilled = self.heuristic(n_ug=self.n_ug, vt_data=vt_data, operation=operation,
+                                                    spilled=spilled,
+                                                    start_days=start_days, maintenance_duration=current_maintenance)
+
+                individual_spilled = np.asarray(individual_spilled)
+                weighted_fob = individual_spilled * inflow / sum(inflow)
+
+                individual_spilled = sum(weighted_fob)
+                # individual_spilled = sum(individual_spilled)
+                fobs[ind] = individual_spilled
+
+                # build pheromone_matrix
+                for ug in range(n_ug):
+                    ind_day_ug = int(start_days[ug])
+                    if not improvement:
+                        pheromone_matrix[ind_day_ug, ug] += 1/fobs[ind]
+
+            # apply ACO improvement
+            if improvement:
+                sorted_fobs = np.sort(fobs)
+                cut = int(pop_size - round(0.2*pop_size))
+                cut_value = sorted_fobs[cut]
+                ratio = 10
+
+                for ind, individual in individuals.items():  # TODO: Can be parallel
+                    start_days = individual['start_days']
+                    for ug in range(n_ug):
+                        ind_day_ug = int(start_days[ug])
+                        if fobs[ind] <= cut_value:
+                            pheromone_matrix[ind_day_ug, ug] += (1 / fobs[ind]) * ratio
+                        else:
+                            pheromone_matrix[ind_day_ug, ug] += (1 / fobs[ind]) / ratio
+
+            # build probability matrix
+            probability_matrix = np.zeros(shape=(n_days, n_ug))
+            for ug in range(n_ug):
+                column_sum = sum(pheromone_matrix[:, ug])
+                for day in range(n_days):
+                    probability_matrix[day, ug] = pheromone_matrix[day, ug] / column_sum
+            probability_matrix = probability_matrix * 100
+
+            # population evolution
+            individuals = {}
+            for ind in range(n_ind):  # TODO: Can be parallel
+                individuals[ind] = {}
+                a = random.uniform(0, 1) * 100
+                start_days = np.zeros(n_ug)
+
+                # individual don't follow the pheromone
+                if a <= n_lost:
+                    for ug in range(self.n_ug):
+                        possible_days = self.dict_of_days[ug]
+                        start_day = random.choice(possible_days)
+                        start_days[ug] = start_day
+
+                # individual follow the pheromone
+                else:
+                    for ug in range(self.n_ug):
+                        probabilities = probability_matrix[:, ug] / 100
+                        start_day = np.random.choice(np.arange(0, n_days), p=probabilities)
+                        start_days[ug] = start_day
+
+                individuals[ind]['start_days'] = start_days
+
+            # evaporation
+            alpha = rho / 100  # evaporation rate
+            pheromone_matrix = (1 - alpha) * pheromone_matrix
+            iteration = iteration + 1
+
+            # save best individual through pheromone matrix for each generation
+            best_ant = np.zeros(n_ug)
+            for ug in range(n_ug):
+                ug_pheromone = pheromone_matrix[:, ug]
+                position_pheromone = np.argmax(ug_pheromone)
+                best_ant[ug] = position_pheromone
+            self.best_individual_evolution.append(best_ant)
+
+        # save best individual through pheromone matrix
+        best_ant = np.zeros(n_ug)
+        for ug in range(n_ug):
+            ug_pheromone = pheromone_matrix[:, ug]
+            position_pheromone = np.argmax(ug_pheromone)
+            best_ant[ug] = position_pheromone
+
+        self.best_individual = best_ant
 
     def bat_algorithm_process(self, uhe_data, previous_calendar, vt_data, n_gen, alpha, lbd, n_ind, maintenance_round,
                               original_operation, original_spill):
@@ -154,7 +277,8 @@ class MetaHeuristics(object):
 
             individual_spilled = np.asarray(individual_spilled)
             weighted_fob = individual_spilled * inflow / sum(inflow)
-            # individual_spilled = weighted_fob
+
+            individual_spilled = weighted_fob
 
             fobs.append(sum(individual_spilled))
 
@@ -165,9 +289,6 @@ class MetaHeuristics(object):
         best_bat = np.asarray(best_bat)
 
         self.evolution = [best_fob]
-
-        def sigmoid_function(x):
-            return 1 / (1 + math.exp(-x))
 
         t = 1
         while t <= n_gen:
@@ -185,8 +306,8 @@ class MetaHeuristics(object):
                 # local search
 
                 rand = np.random.random()
-                if rand < r[ind]:
-                    e = np.ones(ind_size) * np.random.random()
+                if rand > r[ind]:
+                    e = np.random.uniform(low=-3, high=3, size=(ind_size,))
                     current_bat = best_bat + e * a_loud[ind]
 
                 # verify lower and upper violations
@@ -197,9 +318,7 @@ class MetaHeuristics(object):
 
                 # global search
 
-                bat = np.ceil(current_bat)  # round to the next integer - in the future use sigmoid instead
-                # for ug in range(self.n_ug):
-                #     current_bat[ug] = np.round(sigmoid_function(current_bat[ug]))
+                bat = current_bat  # round to the next integer
 
                 start_days = bat.astype(int)
                 operation = copy.deepcopy(original_operation)
@@ -219,7 +338,7 @@ class MetaHeuristics(object):
                 # update bat parameters
 
                 rand = np.random.random()
-                if rand < a_loud[ind] and current_fob <= fobs[ind]:
+                if rand < a_loud[ind] and current_fob < fobs[ind]:
                     individuals[ind]['start_days'] = current_bat
                     r[ind] = (1 - np.exp(-lbd * t))
                     a_loud[ind] = alpha * a_loud[ind]
@@ -228,16 +347,9 @@ class MetaHeuristics(object):
 
             for f, fob in enumerate(generation_fobs):
                 if fob < best_fob:
-                    print('Found super new best')
-                    best_fob = fob
-                    best_bat = individuals[f]['start_days']
-                    # break
-
-                if fob <= best_fob:
                     print('Found new best')
                     best_fob = fob
                     best_bat = individuals[f]['start_days']
-                    break
 
             self.evolution.append(best_fob)
             t += 1
@@ -256,10 +368,9 @@ class MetaHeuristics(object):
         vt_array = np.array([vt_data.vt_max[ug] for ug in range(n_ug)])
 
         # update daily operation state
-        # current_spill = list(spilled)
-        # current_operation = np.asarray(operation)
         current_spill = spilled
         current_operation = operation
+
         # sort ug order based on their maintenance duration
         ug_sorted = [x for _, x in sorted(zip(maintenance_duration, np.arange(0, n_ug)))]
         ug_sorted = ug_sorted[::-1]
@@ -302,7 +413,7 @@ class MetaHeuristics(object):
                                     daily_all_ug_operation[new_ug] = 1
                                     turbined_difference = daily_ug_vt_max - daily_all_vt_max[new_ug]
 
-                                    current_spill[day] = np.max([turbined_difference, 0])
+                                    current_spill[day] += np.max([turbined_difference, 0])
                                     flag = 2
 
                     else:  # do not have an available ug: spill this day

@@ -37,23 +37,21 @@ stop = timeit.default_timer()
 time = stop - start
 print('Data Reading Completed: %4.2f s' % time)
 
-# bat algorithm application
+# ACO inputs
 
 maintenance_duration = UHE_Data.dr_man
 n_ug = 50         # number of generating units
 n_days = 365      # number of days
 ind_size = n_ug   # individual size
-n_ind = 100     # denotes population size,
-n_gen = 5        # denotes number of generations (iterations),
+n_ind = 2000       # denotes population size,
+n_gen = 20        # denotes number of generations (iterations),
 
-alpha = 0.4   # sound wave amplitude decrease rate
-lbd = 0.1     # sound wave pulse emission increase rate
+n_lost = 30  # rate of individuals that don't follow the pheromone
+rho = 0.2    # evaporation rate
 
-n_rounds = 1
+n_rounds = 8
 maintenance_result = np.zeros(shape=(n_ug, n_rounds))
 defined_calendar = np.zeros(shape=(n_ug, n_days))
-
-# UHE_Data.rfo_dia = np.zeros(shape=(n_ug, n_days))
 
 # first optimization
 Agenda = Optimize_Operation(Dados_UHE=UHE_Data, Dados_VT=VT_Data, calendar=defined_calendar,
@@ -63,31 +61,31 @@ arr = Agenda.Operacao
 
 original_operation = Agenda.Operacao
 original_spilled = Agenda.Vertido
+evolutions = []
 
 for current_round in range(n_rounds):
     print('Maintenance Round: %i' % (current_round + 1))
     maintenance_round = current_round
 
-    Bat = MetaHeuristics(uhe_data=UHE_Data, n_ug=n_ug, n_days=n_days,
+    ACO = MetaHeuristics(uhe_data=UHE_Data, n_ug=n_ug, n_days=n_days,
                          maintenance_round=maintenance_round, maintenance_duration=maintenance_duration,
                          previous_calendar=defined_calendar, n_ind=n_ind)
 
     start = timeit.default_timer()
-    Bat.bat_algorithm_process(uhe_data=UHE_Data, previous_calendar=defined_calendar, vt_data=VT_Data,
-                              n_gen=n_gen, alpha=alpha, lbd=lbd, n_ind=n_ind, maintenance_round=current_round,
-                              original_operation=original_operation, original_spill=original_spilled)
+    ACO.ant_colony_optimization(uhe_data=UHE_Data, vt_data=VT_Data, n_gen=n_gen, n_ind=n_ind, n_lost=n_lost, rho=rho,
+                                original_operation=original_operation, original_spill=original_spilled)
 
     stop = timeit.default_timer()
     time = stop - start
-    print('Bat Algorithm Completed: %4.2f s' % time)
+    print('Ant Colony Optimization Completed: %4.2f s' % time)
 
     # update calendar with current maintenance result
-    maintenance_result[:, current_round] = Bat.best_bat_result
+    maintenance_result[:, current_round] = ACO.best_individual
     current_maintenance = maintenance_duration[:, maintenance_round]
 
     for ug in range(n_ug):
         m = int(current_maintenance[ug])
-        start = int(Bat.best_bat_result[ug])
+        start = int(ACO.best_individual[ug])
 
         defined_calendar[ug, start:start + m] = 1
 
@@ -103,20 +101,31 @@ Agenda = Optimize_Operation(Dados_UHE=UHE_Data, Dados_VT=VT_Data, calendar=defin
 plota_Agenda(Agenda.Turbinado, Agenda.Vertido, UHE_Data.vaz_afl, Agenda.Operacao, Agenda.Agenda, UHE_Data.rfo_dia,
              vert_turb=True, ug_op_man=True, vert_n_turb=False, calendario=True)
 
-# HDF and HDP indexes
+# evaluate best individual evolution
 
-Indexes = Calculo_Indicadores(Agenda, UHE_Data, VT_Data)
-x = np.arange(1, 13, 1)
-plt.figure()
-plt.bar(x, Indexes.HDF_mes, color='blue')
-plt.title('HDF Projection')
-plt.xlabel('Month')
-plt.ylabel('HDF')
-plt.show()
+check_individual_evolution = False
+if check_individual_evolution:
+    current_maintenance = maintenance_duration[:, 0]
+    defined_calendar = np.zeros(shape=(n_ug, n_days))
+    fobs = []
 
-plt.figure()
-plt.bar(x, Indexes.HDP_mes, color='orange')
-plt.title('HDP Projection')
-plt.xlabel('Month')
-plt.ylabel('HDP')
-plt.show()
+    inflow = UHE_Data.vaz_afl
+
+    for best_individual in ACO.best_individual_evolution:
+        defined_calendar = np.zeros(shape=(n_ug, n_days))
+        for ug in range(n_ug):
+            m = int(current_maintenance[ug])
+            start = int(best_individual[ug])
+            defined_calendar[ug, start:start + m] = 1
+
+        Agenda = Optimize_Operation(Dados_UHE=UHE_Data, Dados_VT=VT_Data, calendar=defined_calendar,
+                                    previous_calendar=np.zeros(shape=(n_ug, n_days)), n_days=n_days, n_ug=n_ug)
+
+        fobs.append(sum(Agenda.Vertido))
+
+    x = np.arange(1, n_gen + 1, 1)
+    plt.plot(x, fobs)
+    plt.xticks(x)
+    plt.xlabel('Generation')
+    plt.ylabel('Spill')
+    plt.show()
