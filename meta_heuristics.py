@@ -64,10 +64,11 @@ class MetaHeuristics(object):
                     list_of_days.append(day)
 
             lim_1 = 150
-            lim_2 = 40
+            lim_2 = 10
             filter_1 = [x for x in list_of_days if lim_1 <= x]
             filter_2 = [x for x in list_of_days if lim_2 >= x]
             # filter_2 = []
+
             dict_of_days[ug] = filter_2 + filter_1
             if not dict_of_days[ug]:
                 dict_of_days[ug] = list_of_days
@@ -163,8 +164,8 @@ class MetaHeuristics(object):
                 individual_spilled = np.asarray(individual_spilled)
                 weighted_fob = individual_spilled * inflow / sum(inflow)
 
-                individual_spilled = sum(weighted_fob)
-                # individual_spilled = sum(individual_spilled)
+                # individual_spilled = sum(weighted_fob)
+                individual_spilled = sum(individual_spilled)
                 fobs[ind] = individual_spilled
 
                 # build pheromone_matrix

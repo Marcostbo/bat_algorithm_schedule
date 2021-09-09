@@ -4,6 +4,8 @@ class Calculo_Indicadores(object):
 
     def __init__(self, Agenda, Dados_UHE, Dados_VT):
         Num_Dias = 365
+        self.HDF = None
+        self.HDP = None
         self.HDF_mes = np.zeros(Num_Dias)
         self.HDP_mes = np.zeros(Num_Dias)
         self.HDF_acum = np.zeros(Num_Dias)
@@ -53,6 +55,9 @@ class Calculo_Indicadores(object):
 
                 HDF[t] = nt * 24
                 HDP[t] = nr * 24
+
+        self.HDF = HDF
+        self.HDP = HDP
 
         # Agrupa mensalmente HDF e HDP
 
