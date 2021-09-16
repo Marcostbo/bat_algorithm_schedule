@@ -1,6 +1,7 @@
 import numpy as np
 import random
 import copy
+from termcolor import colored
 
 
 class MetaHeuristics(object):
@@ -63,10 +64,11 @@ class MetaHeuristics(object):
                     list_of_days.append(day)
 
             lim_1 = 150
-            lim_2 = 40
+            lim_2 = 20
             filter_1 = [x for x in list_of_days if lim_1 <= x]
             filter_2 = [x for x in list_of_days if lim_2 >= x]
             # filter_2 = []
+
             dict_of_days[ug] = filter_2 + filter_1
             if not dict_of_days[ug]:
                 dict_of_days[ug] = list_of_days
@@ -82,7 +84,12 @@ class MetaHeuristics(object):
             for ug in range(self.n_ug):
                 maintenance = int(current_maintenance[ug])
                 possible_days = dict_of_days[ug]
+                if not possible_days:
+                    maintenance = 0
+                    possible_days = [0]
+                    print(colored(f'Manutenção de {maintenance} dias da UG{ug + 1} não cabe no horizonte anual !!', 'red'))
                 start_day = random.choice(possible_days)
+                # se for vazio: print de alerta, maintenance = 0,
                 start_days.append(start_day)
                 individual[ug, start_day:start_day + maintenance] = 1
 

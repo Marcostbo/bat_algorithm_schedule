@@ -2,6 +2,7 @@ import numpy as np
 import pandas as pd
 import random
 import datetime
+import matplotlib.pyplot as plt
 
 
 class Leitura(object):
@@ -24,105 +25,105 @@ class Leitura(object):
 
     def ler_turbinas(self):
         lista_turbinas = []
-        turbina = {"Nome": "T4-01", "Grupo": "4_pas", }
+        turbina = {"Nome": "ROUHSN_13P8_UG01", "Grupo": "5_pas", }
         lista_turbinas.append(turbina)  # 0
-        turbina = {"Nome": "T4-02", "Grupo": "4_pas", }
+        turbina = {"Nome": "ROUHSN_13P8_UG02", "Grupo": "5_pas", }
         lista_turbinas.append(turbina)  # 1
-        turbina = {"Nome": "T4-03", "Grupo": "4_pas", }
+        turbina = {"Nome": "ROUHSN_13P8_UG03", "Grupo": "5_pas", }
         lista_turbinas.append(turbina)  # 2
-        turbina = {"Nome": "T4-04", "Grupo": "4_pas", }
+        turbina = {"Nome": "ROUHSN_13P8_UG04", "Grupo": "5_pas", }
         lista_turbinas.append(turbina)  # 3
-        turbina = {"Nome": "T4-05", "Grupo": "4_pas", }
+        turbina = {"Nome": "ROUHSN_13P8_UG05", "Grupo": "5_pas", }
         lista_turbinas.append(turbina)  # 4
-        turbina = {"Nome": "T4-06", "Grupo": "4_pas", }
+        turbina = {"Nome": "ROUHSN_13P8_UG06", "Grupo": "5_pas", }
         lista_turbinas.append(turbina)  # 5
-        turbina = {"Nome": "T4-07", "Grupo": "4_pas", }
+        turbina = {"Nome": "ROUHSN_13P8_UG07", "Grupo": "5_pas", }
         lista_turbinas.append(turbina)  # 6
-        turbina = {"Nome": "T4-08", "Grupo": "4_pas", }
+        turbina = {"Nome": "ROUHSN_13P8_UG08", "Grupo": "5_pas", }
         lista_turbinas.append(turbina)  # 7
-        turbina = {"Nome": "T4-09", "Grupo": "4_pas", }
+        turbina = {"Nome": "ROUHSN_13P8_UG09", "Grupo": "5_pas", }
         lista_turbinas.append(turbina)  # 8
-        turbina = {"Nome": "T4-10", "Grupo": "4_pas", }
+        turbina = {"Nome": "ROUHSN_13P8_UG10", "Grupo": "5_pas", }
         lista_turbinas.append(turbina)  # 9
-        turbina = {"Nome": "T4-11", "Grupo": "4_pas", }
+        turbina = {"Nome": "ROUHSN_13P8_UG11", "Grupo": "5_pas", }
         lista_turbinas.append(turbina)  # 10
-        turbina = {"Nome": "T4-12", "Grupo": "4_pas", }
+        turbina = {"Nome": "ROUHSN_13P8_UG12", "Grupo": "5_pas", }
         lista_turbinas.append(turbina)  # 11
-        turbina = {"Nome": "T4-13", "Grupo": "4_pas", }
+        turbina = {"Nome": "ROUHSN_13P8_UG13", "Grupo": "4_pas", }
         lista_turbinas.append(turbina)  # 12
-        turbina = {"Nome": "T4-14", "Grupo": "4_pas", }
+        turbina = {"Nome": "ROUHSN_13P8_UG14", "Grupo": "4_pas", }
         lista_turbinas.append(turbina)  # 13
-        turbina = {"Nome": "T4-15", "Grupo": "4_pas", }
+        turbina = {"Nome": "ROUHSN_13P8_UG15", "Grupo": "4_pas", }
         lista_turbinas.append(turbina)  # 14
-        turbina = {"Nome": "T4-16", "Grupo": "4_pas", }
+        turbina = {"Nome": "ROUHSN_13P8_UG16", "Grupo": "4_pas", }
         lista_turbinas.append(turbina)  # 15
-        turbina = {"Nome": "T4-17", "Grupo": "4_pas", }
+        turbina = {"Nome": "ROUHSN_13P8_UG17", "Grupo": "4_pas", }
         lista_turbinas.append(turbina)  # 16
-        turbina = {"Nome": "T4-18", "Grupo": "4_pas", }
+        turbina = {"Nome": "ROUHSN_13P8_UG18", "Grupo": "4_pas", }
         lista_turbinas.append(turbina)  # 17
-        turbina = {"Nome": "T4-19", "Grupo": "4_pas", }
+        turbina = {"Nome": "ROUHSN_13P8_UG19", "Grupo": "4_pas", }
         lista_turbinas.append(turbina)  # 18
-        turbina = {"Nome": "T4-20", "Grupo": "4_pas", }
+        turbina = {"Nome": "ROUHSN_13P8_UG20", "Grupo": "4_pas", }
         lista_turbinas.append(turbina)  # 19
-        turbina = {"Nome": "T4-21", "Grupo": "4_pas", }
+        turbina = {"Nome": "ROUHSN_13P8_UG21", "Grupo": "5_pas", }
         lista_turbinas.append(turbina)  # 20
-        turbina = {"Nome": "T4-22", "Grupo": "4_pas", }
+        turbina = {"Nome": "ROUHSN_13P8_UG22", "Grupo": "5_pas", }
         lista_turbinas.append(turbina)  # 21
-        turbina = {"Nome": "T4-23", "Grupo": "4_pas", }
+        turbina = {"Nome": "ROUHSN_13P8_UG23", "Grupo": "4_pas", }
         lista_turbinas.append(turbina)  # 21
-        turbina = {"Nome": "T4-24", "Grupo": "4_pas", }
+        turbina = {"Nome": "ROUHSN_13P8_UG24", "Grupo": "4_pas", }
         lista_turbinas.append(turbina)  # 23
-        turbina = {"Nome": "T5-01", "Grupo": "5_pas", }
+        turbina = {"Nome": "ROUHSN_13P8_UG25", "Grupo": "4_pas", }
         lista_turbinas.append(turbina)  # 24
-        turbina = {"Nome": "T5-02", "Grupo": "5_pas", }
+        turbina = {"Nome": "ROUHSN_13P8_UG26", "Grupo": "4_pas", }
         lista_turbinas.append(turbina)  # 25
-        turbina = {"Nome": "T5-03", "Grupo": "5_pas", }
+        turbina = {"Nome": "ROUHSN_13P8_UG27", "Grupo": "4_pas", }
         lista_turbinas.append(turbina)  # 26
-        turbina = {"Nome": "T5-04", "Grupo": "5_pas", }
+        turbina = {"Nome": "ROUHSN_13P8_UG28", "Grupo": "4_pas", }
         lista_turbinas.append(turbina)  # 27
-        turbina = {"Nome": "T5-05", "Grupo": "5_pas", }
+        turbina = {"Nome": "ROUHSN_13P8_UG29", "Grupo": "4_pas", }
         lista_turbinas.append(turbina)  # 28
-        turbina = {"Nome": "T5-06", "Grupo": "5_pas", }
+        turbina = {"Nome": "ROUHSN_13P8_UG30", "Grupo": "4_pas", }
         lista_turbinas.append(turbina)  # 29
-        turbina = {"Nome": "T5-07", "Grupo": "5_pas", }
+        turbina = {"Nome": "ROUHSN_13P8_UG31", "Grupo": "5_pas", }
         lista_turbinas.append(turbina)  # 30
-        turbina = {"Nome": "T5-08", "Grupo": "5_pas", }
+        turbina = {"Nome": "ROUHSN_13P8_UG32", "Grupo": "5_pas", }
         lista_turbinas.append(turbina)  # 31
-        turbina = {"Nome": "T5-09", "Grupo": "5_pas", }
+        turbina = {"Nome": "ROUHSN_13P8_UG33", "Grupo": "5_pas", }
         lista_turbinas.append(turbina)  # 32
-        turbina = {"Nome": "T5-10", "Grupo": "5_pas", }
+        turbina = {"Nome": "ROUHSN_13P8_UG34", "Grupo": "5_pas", }
         lista_turbinas.append(turbina)  # 33
-        turbina = {"Nome": "T5-11", "Grupo": "5_pas", }
+        turbina = {"Nome": "ROUHSN_13P8_UG35", "Grupo": "5_pas", }
         lista_turbinas.append(turbina)  # 34
-        turbina = {"Nome": "T5-12", "Grupo": "5_pas", }
+        turbina = {"Nome": "ROUHSN_13P8_UG36", "Grupo": "5_pas", }
         lista_turbinas.append(turbina)  # 35
-        turbina = {"Nome": "T5-13", "Grupo": "5_pas", }
+        turbina = {"Nome": "ROUHSN_13P8_UG37", "Grupo": "4_pas", }
         lista_turbinas.append(turbina)  # 36
-        turbina = {"Nome": "T5-14", "Grupo": "5_pas", }
+        turbina = {"Nome": "ROUHSN_13P8_UG38", "Grupo": "4_pas", }
         lista_turbinas.append(turbina)  # 37
-        turbina = {"Nome": "T5-15", "Grupo": "5_pas", }
+        turbina = {"Nome": "ROUHSN_13P8_UG39", "Grupo": "4_pas", }
         lista_turbinas.append(turbina)  # 38
-        turbina = {"Nome": "T5-16", "Grupo": "5_pas", }
+        turbina = {"Nome": "ROUHSN_13P8_UG40", "Grupo": "4_pas", }
         lista_turbinas.append(turbina)  # 39
-        turbina = {"Nome": "T5-17", "Grupo": "5_pas", }
+        turbina = {"Nome": "ROUHSN_13P8_UG41", "Grupo": "4_pas", }
         lista_turbinas.append(turbina)  # 40
-        turbina = {"Nome": "T5-18", "Grupo": "5_pas", }
+        turbina = {"Nome": "ROUHSN_13P8_UG42", "Grupo": "4_pas", }
         lista_turbinas.append(turbina)  # 41
-        turbina = {"Nome": "T5-19", "Grupo": "5_pas", }
+        turbina = {"Nome": "ROUHSN_13P8_UG43", "Grupo": "4_pas", }
         lista_turbinas.append(turbina)  # 42
-        turbina = {"Nome": "T5-20", "Grupo": "5_pas", }
+        turbina = {"Nome": "ROUHSN_13P8_UG44", "Grupo": "4_pas", }
         lista_turbinas.append(turbina)  # 43
-        turbina = {"Nome": "T5-21", "Grupo": "5_pas", }
+        turbina = {"Nome": "ROUHSN_13P8_UG45", "Grupo": "5_pas", }
         lista_turbinas.append(turbina)  # 44
-        turbina = {"Nome": "T5-22", "Grupo": "5_pas", }
+        turbina = {"Nome": "ROUHSN_13P8_UG46", "Grupo": "5_pas", }
         lista_turbinas.append(turbina)  # 45
-        turbina = {"Nome": "T5-23", "Grupo": "5_pas", }
+        turbina = {"Nome": "ROUHSN_13P8_UG47", "Grupo": "5_pas", }
         lista_turbinas.append(turbina)  # 46
-        turbina = {"Nome": "T5-24", "Grupo": "5_pas", }
+        turbina = {"Nome": "ROUHSN_13P8_UG48", "Grupo": "5_pas", }
         lista_turbinas.append(turbina)  # 47
-        turbina = {"Nome": "T5-25", "Grupo": "5_pas", }
+        turbina = {"Nome": "ROUHSN_13P8_UG49", "Grupo": "5_pas", }
         lista_turbinas.append(turbina)  # 48
-        turbina = {"Nome": "T5-26", "Grupo": "5_pas", }
+        turbina = {"Nome": "ROUHSN_13P8_UG50", "Grupo": "5_pas", }
         lista_turbinas.append(turbina)  # 49
 
         self.lista_turbinas = lista_turbinas
@@ -165,9 +166,9 @@ class Leitura(object):
         for ug in range(Num_Turbinas):
             UG = ug + 1
             if UG < 10:
-                txt = 'UG0' + str(UG)
+                txt = 'ROUHSN_13P8_UG0' + str(UG)
             else:
-                txt = 'UG' + str(UG)
+                txt = 'ROUHSN_13P8_UG' + str(UG)
 
             df_ug = df.loc[df['UG'] == txt]
             n = len(df_ug)
@@ -178,9 +179,9 @@ class Leitura(object):
         for ug in range(50):
             UG = ug + 1
             if UG < 10:
-                txt = 'UG0' + str(UG)
+                txt = 'ROUHSN_13P8_UG0' + str(UG)
             else:
-                txt = 'UG' + str(UG)
+                txt = 'ROUHSN_13P8_UG' + str(UG)
 
             df_ug = df.loc[df['UG'] == txt]
             N = len(df_ug)
@@ -210,7 +211,10 @@ class Leitura(object):
 
         mapa = {'Equipamento': 'UG',
                 'Data Inicio Verificada': 'Data_Ini',
-                'Data Fim Verificada': 'Data_Fim'}
+                'Data Fim Corrigida': 'Data_Fim'}
+        # mapa = {'Equipamento': 'UG',
+        #         'Data Inicio Verificada': 'Data_Ini',
+        #         'Data Fim Verificada': 'Data_Fim'}
 
         df = df.rename(columns=mapa)
 
@@ -248,7 +252,7 @@ class Leitura(object):
         for t in range(Num_Turbinas):
             dados = {}
             Turbina = t + 1
-            if t < 10:
+            if t < 9:
                 txt = 'ROUHSN_13P8_UG0' + str(Turbina)
             else:
                 txt = 'ROUHSN_13P8_UG' + str(Turbina)
@@ -275,6 +279,13 @@ class Leitura(object):
                         dados_m.extend(dias)
 
                 dados[m] = dados_m
+
+                dados_m.append(99999)
+                list_aux = []
+                for i in range(len(dados_m) - 1):
+                    if dados_m[i] != dados_m[i + 1]:
+                        list_aux.append(int(dados_m[i]))
+                dados[m] = list_aux
 
             dados_gerais.append(dados)
 
@@ -322,82 +333,32 @@ class Leitura(object):
 
         self.rfo_dia = matriz_ano
 
-    def ler_manut_def(self, path_calendario):
-        # 1) LEITURA E ORGANIZAÇÃO DA PLANILHA DE MANUTENÇÃO #
-
-        planilha = path_calendario
-        data = pd.read_excel(planilha)
-        Num_Dias = 365
-
-        data = data.drop(columns=['Unnamed: 0', 'Unnamed: 1'])
-        c = datetime.datetime(2021, 5, 4, 0, 0)
-        data = data.drop(columns=['Unnamed: 9', 'Unnamed: 10', 'Unnamed: 11', c, 'Unnamed: 13'])
-        data = data.drop(labels=[0, 1, 2, 3, 4])
-        data = data.drop(labels=np.arange(190, 208))
-
-        mapa = {'Unnamed: 2': 'UG',
-                'Unnamed: 3': 'N_Pas',
-                'Unnamed: 4': 'Fabricante',
-                'Unnamed: 5': 'Motivo',
-                'Unnamed: 6': 'Inicio',
-                'Unnamed: 7': 'Fim',
-                'Unnamed: 8': 'Duracao'}
-
-        data = data.rename(columns=mapa)
-
-        d_ini = 14
-        d_fim = 411
-        dia = 0
-        mapa_dia = {}
-
-        for i in np.arange(d_ini, d_fim):
-            dia = dia + 1
-            txt = 'Unnamed: %i' % (i)
-            mapa_dia[txt] = dia
-
-        data = data.rename(columns=mapa_dia)
-        N_Dias = dia - 1
-        N_Manut = len(data[1].values)
-        for d in np.arange(1, N_Dias + 1):
-            dia = d
-            a = data[dia].values
-            for m in range(N_Manut):
-                res = isinstance(a[m], str)
-                if res:
-                    a[m] = 1
-                else:
-                    a[m] = 0
-            data[dia] = a
-
-        data = data.drop(columns=397)
-
-        # 2) OBTÊM CALENDÁRIO DE MANUTENÇÃO #
-
-        Num_Turbinas = 50
-        Agenda_def = np.zeros(shape=(Num_Turbinas, N_Dias))
-        txt = 'UG'
-
-        for tb in range(Num_Turbinas):
-            Turbina = tb + 1
-            if Turbina < 10:
-                txt_tb = txt + str(0) + str(Turbina)
-                df_tb = data.loc[data['UG'] == txt_tb]
-            else:
-                txt_tb = txt + str(Turbina)
-                df_tb = data.loc[data['UG'] == txt_tb]
-
-            for d in range(N_Dias):
-                dia = d + 1
-                m_tb = sum(df_tb[dia].values)
-                if m_tb >= 1:
-                    Agenda_def[tb, d] = 1
-                else:
-                    Agenda_def[tb, d] = 0
-
-        self.manut_def = Agenda_def[:, 0:Num_Dias]
-
     def ler_manut_def_array(self, Agenda_def):
         self.manut_def = Agenda_def
+
+    def parameters_plot(self, vt_UG):
+
+        # Vazão Afluente e Vazão Máxima #
+        plt.figure()
+        x = np.arange(1, 365 + 1, 1)
+        x_plot = np.arange(15, 365, 30)
+        txt = ['Jan', 'Fev', 'Mar', 'Abr', 'Mai', 'Jun', 'Jul', 'Ago', 'Set', 'Out', 'Nov', 'Dez']
+        plt.plot(x, self.vaz_afl, linewidth=3)
+        plt.xlabel('Meses', fontsize=14)
+        plt.ylabel('Vazão Afluente [$m^3/s$]', fontsize=14)
+        plt.xticks(x_plot, txt, fontsize=12)
+        plt.yticks(fontsize=12)
+        plt.show()
+
+        plt.figure()
+        plt.plot(x, vt_UG[0], label='4 Pás')
+        plt.plot(x, vt_UG[24], label='5 Pás')
+        plt.xticks(x_plot, fontsize=12)
+        plt.yticks(fontsize=12)
+        plt.xlabel('Dias', fontsize=14)
+        plt.ylabel('Vazão Turbinada Máxima [$m^3/s$]', fontsize=14)
+        plt.legend()
+        plt.show()
 
 
 class Volume_Turbinado(object):

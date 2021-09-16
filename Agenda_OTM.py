@@ -22,7 +22,7 @@ class Otimizacao(object):
         Num_Turbinas = 50
 
         self.n_rodadas = duracao_manutencao.shape[1]
-        self.n_rodadas = 1
+        self.n_rodadas = 8
         N_Rodadas = self.n_rodadas
 
         agenda_ofi = np.zeros(shape=(Num_Turbinas, Num_Dias))
@@ -202,6 +202,7 @@ class Optimize_Operation(object):
         self.flag_out = 0
         self.n_days = n_days
         self.n_ug = n_ug
+        self.n_rodadas = Dados_UHE.dr_man.shape[1]
 
         self.optimize(Dados_UHE, Dados_VT.vt_max, calendar=calendar, previous_calendar=previous_calendar)
 
