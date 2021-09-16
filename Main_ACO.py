@@ -39,7 +39,6 @@ time = stop - start
 print('Data Reading Completed: %4.2f s' % time)
 
 # UHE_Data.parameters_plot(VT_Data.vt_max)  # plot inflow and max turbined
-# UHE_Data.rfo_dia = np.zeros(shape=(50, 365))
 
 # ACO inputs
 
@@ -47,13 +46,13 @@ maintenance_duration = UHE_Data.dr_man
 n_ug = 50         # number of generating units
 n_days = 365      # number of days
 ind_size = n_ug   # individual size
-n_ind = 100       # denotes population size
-n_gen = 20        # denotes number of generations (iterations),
+n_ind = 100      # denotes population size
+n_gen = 100        # denotes number of generations (iterations),
 
-n_lost = 20  # rate of individuals that don't follow the pheromone
+n_lost = 30  # rate of individuals that don't follow the pheromone
 rho = 0.2    # evaporation rate
 
-n_rounds = 4
+n_rounds = 8
 maintenance_result = np.zeros(shape=(n_ug, n_rounds))
 defined_calendar = np.zeros(shape=(n_ug, n_days))
 
@@ -161,3 +160,7 @@ export_excel = False
 
 if export_excel:
     Results(Indicadores=Indexes, UHE_Data=UHE_Data, Agenda=Agenda, path_maintenance=path_maintenance)
+
+Indicadores = Calculo_Indicadores(Agenda, UHE_Data, VT_Data)
+print("HDF: ", sum(Indicadores.HDF_mes))
+print("HDP: ", sum(Indicadores.HDP_mes))
