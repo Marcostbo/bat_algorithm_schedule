@@ -3,11 +3,16 @@ import pandas as pd
 import random
 from datetime import date, timedelta
 import os
+from os import path
+
 
 class Results(object):
 
     def __init__(self, Indicadores, UHE_Data, Agenda, path_maintenance):
-        os.makedirs('Excel_Results')
+
+        if not path.exists('Excel_Results'):
+            os.makedirs('Excel_Results')
+
         self.samug_df = None
         self.results_1_df = None
         self.results_2_df = None
@@ -60,9 +65,15 @@ class Results(object):
         samug_df_hdf['Equipamento'] = Turbinas
         samug_df_hdf['Estado Operativo'] = 'LIG'
         samug_df_hdf['Hora Inicio Verificada'] = '00:00'
-        samug_df_hdf['Nº ONS'] = 'SIMULACAO FID'
         samug_df_hdf['Validação Agente'] = 'NOV'
         samug_df_hdf['Tempo'] = 720.
+
+        # insere número do ons de forma iterativa SIMULAÇÂO FID 1, 2, 3...
+        list_n_ons_1 = []
+        for i in np.arange(1, 365 * 50 + 1):
+            txt = 'SIMULACAO FID ' + str(i)
+            list_n_ons_1.append(txt)
+        samug_df_hdf['Nº ONS'] = list_n_ons_1
 
         # CALCULADO disponibilidade
         horas_disponivel_dia = 12 * 50
@@ -118,9 +129,15 @@ class Results(object):
         samug_df_hdp['Equipamento'] = Turbinas
         samug_df_hdp['Estado Operativo'] = 'LIG'
         samug_df_hdp['Hora Inicio Verificada'] = '00:00'
-        samug_df_hdp['Nº ONS'] = 'SIMULACAO FID'
         samug_df_hdp['Validação Agente'] = 'NOV'
         samug_df_hdp['Tempo'] = 720.
+
+        # insere número do ons de forma iterativa SIMULAÇÂO FID 1, 2, 3...
+        list_n_ons_2 = []
+        for i in np.arange((365 * 50) + 1, (365 * 50 * 2) + 1):
+            txt = 'SIMULACAO FID ' + str(i)
+            list_n_ons_2.append(txt)
+        samug_df_hdp['Nº ONS'] = list_n_ons_2
 
         horas_disponivel_dia = 12 * 50
         percentual_disponibilidade_diaria = []
@@ -151,7 +168,7 @@ class Results(object):
                     lista_condicao_operativa.append('NOR')
                     lista_origem.append('')
                 else:
-                    lista_condicao_operativa.append('RPG')
+                    lista_condicao_operativa.append('RPR')
                     lista_origem.append('GAC')
         samug_df_hdp['Condição Operativa'] = lista_condicao_operativa
         samug_df_hdp['Origem'] = lista_origem
