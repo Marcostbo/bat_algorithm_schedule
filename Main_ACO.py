@@ -22,7 +22,7 @@ main_path = os.path.realpath(dir_name)
 path_hydrology = main_path + '/Hydrology.xlsx'
 path_maintenance = main_path + '/Maintenance_Duration.xlsx'
 path_rfo = main_path + '/Data_Mining_SAMUG.xlsx'
-path_pdf = main_path + '/Data_Mining_SAMUG_SMC_Old.xlsx'
+path_pdf = main_path + '/Data_Mining_SAMUG_SMC.xlsx'
 
 UHE_Data = Leitura(path_vazao=path_hydrology, path_manutencao=path_maintenance,
                    path_rfo=path_rfo, path_pdf=path_pdf, calendario_def=None)
@@ -46,10 +46,10 @@ maintenance_duration = UHE_Data.dr_man
 n_ug = 50         # number of generating units
 n_days = 365      # number of days
 ind_size = n_ug   # individual size
-n_ind = 200      # denotes population size
-n_gen = 50        # denotes number of generations (iterations),
+n_ind = 2000      # denotes population size
+n_gen = 30        # denotes number of generations (iterations),
 
-n_lost = 30  # rate of individuals that don't follow the pheromone
+n_lost = 20  # rate of individuals that don't follow the pheromone
 rho = 0.2    # evaporation rate
 
 n_rounds = 8
