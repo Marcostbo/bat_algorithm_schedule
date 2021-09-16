@@ -87,7 +87,7 @@ class MetaHeuristics(object):
                 if not possible_days:
                     maintenance = 0
                     possible_days = [0]
-                    print(colored(f'Manutenção de {maintenance} dias da UG{ug + 1} não cabe no horizonte anual !!', 'red'))
+                    print(colored(f'Manutenção de {maintenance} dias da UG{ug+1} não cabe no horizonte anual !', 'red'))
                 start_day = random.choice(possible_days)
                 # se for vazio: print de alerta, maintenance = 0,
                 start_days.append(start_day)

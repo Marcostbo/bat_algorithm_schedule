@@ -19,105 +19,105 @@ class Leitura(object):
 
     def ler_turbinas(self):
         lista_turbinas = []
-        turbina = {"Nome": "T4-01", "Grupo": "4_pas", }
+        turbina = {"Nome": "ROUHSN_13P8_UG01", "Grupo": "5_pas", }
         lista_turbinas.append(turbina)  # 0
-        turbina = {"Nome": "T4-02", "Grupo": "4_pas", }
+        turbina = {"Nome": "ROUHSN_13P8_UG02", "Grupo": "5_pas", }
         lista_turbinas.append(turbina)  # 1
-        turbina = {"Nome": "T4-03", "Grupo": "4_pas", }
+        turbina = {"Nome": "ROUHSN_13P8_UG03", "Grupo": "5_pas", }
         lista_turbinas.append(turbina)  # 2
-        turbina = {"Nome": "T4-04", "Grupo": "4_pas", }
+        turbina = {"Nome": "ROUHSN_13P8_UG04", "Grupo": "5_pas", }
         lista_turbinas.append(turbina)  # 3
-        turbina = {"Nome": "T4-05", "Grupo": "4_pas", }
+        turbina = {"Nome": "ROUHSN_13P8_UG05", "Grupo": "5_pas", }
         lista_turbinas.append(turbina)  # 4
-        turbina = {"Nome": "T4-06", "Grupo": "4_pas", }
+        turbina = {"Nome": "ROUHSN_13P8_UG06", "Grupo": "5_pas", }
         lista_turbinas.append(turbina)  # 5
-        turbina = {"Nome": "T4-07", "Grupo": "4_pas", }
+        turbina = {"Nome": "ROUHSN_13P8_UG07", "Grupo": "5_pas", }
         lista_turbinas.append(turbina)  # 6
-        turbina = {"Nome": "T4-08", "Grupo": "4_pas", }
+        turbina = {"Nome": "ROUHSN_13P8_UG08", "Grupo": "5_pas", }
         lista_turbinas.append(turbina)  # 7
-        turbina = {"Nome": "T4-09", "Grupo": "4_pas", }
+        turbina = {"Nome": "ROUHSN_13P8_UG09", "Grupo": "5_pas", }
         lista_turbinas.append(turbina)  # 8
-        turbina = {"Nome": "T4-10", "Grupo": "4_pas", }
+        turbina = {"Nome": "ROUHSN_13P8_UG10", "Grupo": "5_pas", }
         lista_turbinas.append(turbina)  # 9
-        turbina = {"Nome": "T4-11", "Grupo": "4_pas", }
+        turbina = {"Nome": "ROUHSN_13P8_UG11", "Grupo": "5_pas", }
         lista_turbinas.append(turbina)  # 10
-        turbina = {"Nome": "T4-12", "Grupo": "4_pas", }
+        turbina = {"Nome": "ROUHSN_13P8_UG12", "Grupo": "5_pas", }
         lista_turbinas.append(turbina)  # 11
-        turbina = {"Nome": "T4-13", "Grupo": "4_pas", }
+        turbina = {"Nome": "ROUHSN_13P8_UG13", "Grupo": "4_pas", }
         lista_turbinas.append(turbina)  # 12
-        turbina = {"Nome": "T4-14", "Grupo": "4_pas", }
+        turbina = {"Nome": "ROUHSN_13P8_UG14", "Grupo": "4_pas", }
         lista_turbinas.append(turbina)  # 13
-        turbina = {"Nome": "T4-15", "Grupo": "4_pas", }
+        turbina = {"Nome": "ROUHSN_13P8_UG15", "Grupo": "4_pas", }
         lista_turbinas.append(turbina)  # 14
-        turbina = {"Nome": "T4-16", "Grupo": "4_pas", }
+        turbina = {"Nome": "ROUHSN_13P8_UG16", "Grupo": "4_pas", }
         lista_turbinas.append(turbina)  # 15
-        turbina = {"Nome": "T4-17", "Grupo": "4_pas", }
+        turbina = {"Nome": "ROUHSN_13P8_UG17", "Grupo": "4_pas", }
         lista_turbinas.append(turbina)  # 16
-        turbina = {"Nome": "T4-18", "Grupo": "4_pas", }
+        turbina = {"Nome": "ROUHSN_13P8_UG18", "Grupo": "4_pas", }
         lista_turbinas.append(turbina)  # 17
-        turbina = {"Nome": "T4-19", "Grupo": "4_pas", }
+        turbina = {"Nome": "ROUHSN_13P8_UG19", "Grupo": "4_pas", }
         lista_turbinas.append(turbina)  # 18
-        turbina = {"Nome": "T4-20", "Grupo": "4_pas", }
+        turbina = {"Nome": "ROUHSN_13P8_UG20", "Grupo": "4_pas", }
         lista_turbinas.append(turbina)  # 19
-        turbina = {"Nome": "T4-21", "Grupo": "4_pas", }
+        turbina = {"Nome": "ROUHSN_13P8_UG21", "Grupo": "5_pas", }
         lista_turbinas.append(turbina)  # 20
-        turbina = {"Nome": "T4-22", "Grupo": "4_pas", }
+        turbina = {"Nome": "ROUHSN_13P8_UG22", "Grupo": "5_pas", }
         lista_turbinas.append(turbina)  # 21
-        turbina = {"Nome": "T4-23", "Grupo": "4_pas", }
+        turbina = {"Nome": "ROUHSN_13P8_UG23", "Grupo": "4_pas", }
         lista_turbinas.append(turbina)  # 21
-        turbina = {"Nome": "T4-24", "Grupo": "4_pas", }
+        turbina = {"Nome": "ROUHSN_13P8_UG24", "Grupo": "4_pas", }
         lista_turbinas.append(turbina)  # 23
-        turbina = {"Nome": "T5-01", "Grupo": "5_pas", }
+        turbina = {"Nome": "ROUHSN_13P8_UG25", "Grupo": "4_pas", }
         lista_turbinas.append(turbina)  # 24
-        turbina = {"Nome": "T5-02", "Grupo": "5_pas", }
+        turbina = {"Nome": "ROUHSN_13P8_UG26", "Grupo": "4_pas", }
         lista_turbinas.append(turbina)  # 25
-        turbina = {"Nome": "T5-03", "Grupo": "5_pas", }
+        turbina = {"Nome": "ROUHSN_13P8_UG27", "Grupo": "4_pas", }
         lista_turbinas.append(turbina)  # 26
-        turbina = {"Nome": "T5-04", "Grupo": "5_pas", }
+        turbina = {"Nome": "ROUHSN_13P8_UG28", "Grupo": "4_pas", }
         lista_turbinas.append(turbina)  # 27
-        turbina = {"Nome": "T5-05", "Grupo": "5_pas", }
+        turbina = {"Nome": "ROUHSN_13P8_UG29", "Grupo": "4_pas", }
         lista_turbinas.append(turbina)  # 28
-        turbina = {"Nome": "T5-06", "Grupo": "5_pas", }
+        turbina = {"Nome": "ROUHSN_13P8_UG30", "Grupo": "4_pas", }
         lista_turbinas.append(turbina)  # 29
-        turbina = {"Nome": "T5-07", "Grupo": "5_pas", }
+        turbina = {"Nome": "ROUHSN_13P8_UG31", "Grupo": "5_pas", }
         lista_turbinas.append(turbina)  # 30
-        turbina = {"Nome": "T5-08", "Grupo": "5_pas", }
+        turbina = {"Nome": "ROUHSN_13P8_UG32", "Grupo": "5_pas", }
         lista_turbinas.append(turbina)  # 31
-        turbina = {"Nome": "T5-09", "Grupo": "5_pas", }
+        turbina = {"Nome": "ROUHSN_13P8_UG33", "Grupo": "5_pas", }
         lista_turbinas.append(turbina)  # 32
-        turbina = {"Nome": "T5-10", "Grupo": "5_pas", }
+        turbina = {"Nome": "ROUHSN_13P8_UG34", "Grupo": "5_pas", }
         lista_turbinas.append(turbina)  # 33
-        turbina = {"Nome": "T5-11", "Grupo": "5_pas", }
+        turbina = {"Nome": "ROUHSN_13P8_UG35", "Grupo": "5_pas", }
         lista_turbinas.append(turbina)  # 34
-        turbina = {"Nome": "T5-12", "Grupo": "5_pas", }
+        turbina = {"Nome": "ROUHSN_13P8_UG36", "Grupo": "5_pas", }
         lista_turbinas.append(turbina)  # 35
-        turbina = {"Nome": "T5-13", "Grupo": "5_pas", }
+        turbina = {"Nome": "ROUHSN_13P8_UG37", "Grupo": "4_pas", }
         lista_turbinas.append(turbina)  # 36
-        turbina = {"Nome": "T5-14", "Grupo": "5_pas", }
+        turbina = {"Nome": "ROUHSN_13P8_UG38", "Grupo": "4_pas", }
         lista_turbinas.append(turbina)  # 37
-        turbina = {"Nome": "T5-15", "Grupo": "5_pas", }
+        turbina = {"Nome": "ROUHSN_13P8_UG39", "Grupo": "4_pas", }
         lista_turbinas.append(turbina)  # 38
-        turbina = {"Nome": "T5-16", "Grupo": "5_pas", }
+        turbina = {"Nome": "ROUHSN_13P8_UG40", "Grupo": "4_pas", }
         lista_turbinas.append(turbina)  # 39
-        turbina = {"Nome": "T5-17", "Grupo": "5_pas", }
+        turbina = {"Nome": "ROUHSN_13P8_UG41", "Grupo": "4_pas", }
         lista_turbinas.append(turbina)  # 40
-        turbina = {"Nome": "T5-18", "Grupo": "5_pas", }
+        turbina = {"Nome": "ROUHSN_13P8_UG42", "Grupo": "4_pas", }
         lista_turbinas.append(turbina)  # 41
-        turbina = {"Nome": "T5-19", "Grupo": "5_pas", }
+        turbina = {"Nome": "ROUHSN_13P8_UG43", "Grupo": "4_pas", }
         lista_turbinas.append(turbina)  # 42
-        turbina = {"Nome": "T5-20", "Grupo": "5_pas", }
+        turbina = {"Nome": "ROUHSN_13P8_UG44", "Grupo": "4_pas", }
         lista_turbinas.append(turbina)  # 43
-        turbina = {"Nome": "T5-21", "Grupo": "5_pas", }
+        turbina = {"Nome": "ROUHSN_13P8_UG45", "Grupo": "5_pas", }
         lista_turbinas.append(turbina)  # 44
-        turbina = {"Nome": "T5-22", "Grupo": "5_pas", }
+        turbina = {"Nome": "ROUHSN_13P8_UG46", "Grupo": "5_pas", }
         lista_turbinas.append(turbina)  # 45
-        turbina = {"Nome": "T5-23", "Grupo": "5_pas", }
+        turbina = {"Nome": "ROUHSN_13P8_UG47", "Grupo": "5_pas", }
         lista_turbinas.append(turbina)  # 46
-        turbina = {"Nome": "T5-24", "Grupo": "5_pas", }
+        turbina = {"Nome": "ROUHSN_13P8_UG48", "Grupo": "5_pas", }
         lista_turbinas.append(turbina)  # 47
-        turbina = {"Nome": "T5-25", "Grupo": "5_pas", }
+        turbina = {"Nome": "ROUHSN_13P8_UG49", "Grupo": "5_pas", }
         lista_turbinas.append(turbina)  # 48
-        turbina = {"Nome": "T5-26", "Grupo": "5_pas", }
+        turbina = {"Nome": "ROUHSN_13P8_UG50", "Grupo": "5_pas", }
         lista_turbinas.append(turbina)  # 49
 
         self.lista_turbinas = lista_turbinas
