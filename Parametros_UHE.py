@@ -212,6 +212,9 @@ class Leitura(object):
         mapa = {'Equipamento': 'UG',
                 'Data Inicio Verificada': 'Data_Ini',
                 'Data Fim Corrigida': 'Data_Fim'}
+        mapa = {'Equipamento': 'UG',
+                'Data Inicio Verificada': 'Data_Ini',
+                'Data Fim Verificada': 'Data_Fim'}
 
         df = df.rename(columns=mapa)
 
