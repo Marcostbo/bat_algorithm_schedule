@@ -46,13 +46,13 @@ maintenance_duration = UHE_Data.dr_man
 n_ug = 50         # number of generating units
 n_days = 365      # number of days
 ind_size = n_ug   # individual size
-n_ind = 500       # denotes population size
+n_ind = 100       # denotes population size
 n_gen = 20        # denotes number of generations (iterations)
 
 n_lost = 20  # rate of individuals that don't follow the pheromone
 rho = 0.2    # evaporation rate
 
-n_rounds = 4     # number of maintenance rounds
+n_rounds = 8     # number of maintenance rounds
 
 maintenance_result = np.zeros(shape=(n_ug, n_rounds))
 defined_calendar = np.zeros(shape=(n_ug, n_days))
