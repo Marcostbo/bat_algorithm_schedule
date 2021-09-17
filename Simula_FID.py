@@ -4,8 +4,8 @@ class Calculo_Indicadores(object):
 
     def __init__(self, Agenda, Dados_UHE, Dados_VT):
         Num_Dias = 365
-        self.HDF = None
-        self.HDP = None
+        self.HDF = np.zeros(Num_Dias)
+        self.HDP = np.zeros(Num_Dias)
         self.HDF_mes = np.zeros(Num_Dias)
         self.HDP_mes = np.zeros(Num_Dias)
         self.HDF_acum = np.zeros(Num_Dias)
@@ -44,20 +44,26 @@ class Calculo_Indicadores(object):
 
         for t in range(Num_Dias):
             if vt_rfo[t] - VV_pen[t] >= 0:  # Vertimento vira HDF
-                nt = VV_pen[t] / vt_max[49, t]
-                HDF[t] = nt * 24
+                if vt_max[12, t] > 0:  # QUANDO OPERA COM UG DE 4 E 5 PÁS
+                    nt = VV_pen[t] / ((vt_max[0, t] + vt_max[12, t])/2)  # MÉDIA DE TURB_MAX ENTRE UG DE 4 E 5 PÁS
+                    HDF[t] = nt * 24
+                else:  # QUANDO OPERA APENAS COM UG DE 5 PÁS
+                    nt = VV_pen[t] / vt_max[0, t]   # MÉDIA DE TURB_MAX ENTRE UG DE 4 E 5 PÁS
+                    HDF[t] = nt * 24
 
             if vt_rfo[t] - VV_pen[t] < 0:  # Vertimento vira HDF e HDP
-
-                n = VV_pen[t] / vt_max[49, t]  # Número total de turbinas
-                nt = vt_rfo[t] / vt_max[49, t]  # Número máximo para HDF
-                nr = n - nt  # Resto das Turbinas vai para HDP
-
-                HDF[t] = nt * 24
-                HDP[t] = nr * 24
-
-        self.HDF = HDF
-        self.HDP = HDP
+                if vt_max[12, t] > 0:  # QUANDO OPERA COM UG DE 4 E 5 PÁS
+                    n = VV_pen[t] / ((vt_max[0, t] + vt_max[12, t])/2)  # Número total de turbinas
+                    nt = vt_rfo[t] / ((vt_max[0, t] + vt_max[12, t])/2)  # Número máximo para HDF
+                    nr = n - nt  # Resto das Turbinas vai para HDP
+                    HDF[t] = nt * 24
+                    HDP[t] = nr * 24
+                else:  # QUANDO OPERA APENAS COM UG DE 5 PÁS
+                    n = VV_pen[t] / vt_max[0, t]   # Número total de turbinas
+                    nt = vt_rfo[t] / vt_max[0, t]   # Número máximo para HDF
+                    nr = n - nt  # Resto das Turbinas vai para HDP
+                    HDF[t] = nt * 24
+                    HDP[t] = nr * 24
 
         # Agrupa mensalmente HDF e HDP
 
@@ -72,6 +78,7 @@ class Calculo_Indicadores(object):
             HDP_mes[imes] = np.sum(HDP[0 + k:num_dias_mes[imes] + k])
             k += num_dias_mes[imes]
 
+        self.HDF = HDF
+        self.HDP = HDP
         self.HDF_mes = HDF_mes
         self.HDP_mes = HDP_mes
-

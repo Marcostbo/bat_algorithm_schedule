@@ -64,7 +64,7 @@ class MetaHeuristics(object):
                     list_of_days.append(day)
 
             lim_1 = 150
-            lim_2 = 20
+            lim_2 = 10
             filter_1 = [x for x in list_of_days if lim_1 <= x]
             filter_2 = [x for x in list_of_days if lim_2 >= x]
             # filter_2 = []
@@ -87,9 +87,8 @@ class MetaHeuristics(object):
                 if not possible_days:
                     maintenance = 0
                     possible_days = [0]
-                    print(colored(f'Manutenção de {maintenance} dias da UG{ug+1} não cabe no horizonte anual !', 'red'))
+                    print(colored(f'Manutenção de {maintenance} dias da UG{ug + 1} não cabe no horizonte anual !!', 'red'))
                 start_day = random.choice(possible_days)
-                # se for vazio: print de alerta, maintenance = 0,
                 start_days.append(start_day)
                 individual[ug, start_day:start_day + maintenance] = 1
 
@@ -135,7 +134,6 @@ class MetaHeuristics(object):
         # Ant Colony Optimization (ACO)
 
         # ACO input data
-        ind_size = self.n_ug  # individual size
         pop_size = n_ind      # denotes population size
 
         individuals = copy.deepcopy(self.start_individuals)  # deep copy from original individuals
@@ -145,7 +143,6 @@ class MetaHeuristics(object):
         n_ug = self.n_ug
         pheromone_matrix = np.zeros(shape=(n_days, n_ug))
         fobs = np.zeros(pop_size)
-        best_fobs = np.zeros(n_iter)
 
         iteration = 0
 
@@ -160,19 +157,24 @@ class MetaHeuristics(object):
             for ind, individual in individuals.items():  # TODO: Can be parallel
                 start_days = individual['start_days']
                 operation = copy.deepcopy(original_operation)
-                spilled = copy.deepcopy(original_spill)
+                # spilled = copy.deepcopy(original_spill)
 
-                individual_spilled = self.heuristic(n_ug=self.n_ug, vt_data=vt_data, operation=operation,
-                                                    spilled=spilled,
-                                                    start_days=start_days, maintenance_duration=current_maintenance)
+                # individual_spilled, individual_operation = self.heuristic(n_ug=self.n_ug, vt_data=vt_data,
+                #                                                           operation=operation, spilled=spilled,
+                #                                                           start_days=start_days,
+                #                                                           maintenance_duration=current_maintenance)
+                #
+                # individual_spilled = np.asarray(individual_spilled)
+                # weighted_fob = individual_spilled * inflow / sum(inflow)
+                #
+                # individual_spilled = sum(weighted_fob)
 
-                individual_spilled = np.asarray(individual_spilled)
-                weighted_fob = individual_spilled * inflow / sum(inflow)
-
-                individual_spilled = sum(weighted_fob)
-                # individual_spilled = sum(individual_spilled)
-                fobs[ind] = individual_spilled
-
+                individual_hdp = self.calculate_hdp(n_ug=n_ug, n_days=n_days, inflow=inflow, rfo=uhe_data.rfo_dia,
+                                                    vt_data=vt_data, individual_spilled=[],
+                                                    individual_operation=operation, individual=individual,
+                                                    maintenance=current_maintenance)
+                # fobs[ind] = individual_spilled
+                fobs[ind] = sum(individual_hdp)
                 # build pheromone_matrix
                 for ug in range(n_ug):
                     ind_day_ug = int(start_days[ug])
@@ -232,12 +234,14 @@ class MetaHeuristics(object):
             iteration = iteration + 1
 
             # save best individual through pheromone matrix for each generation
-            best_ant = np.zeros(n_ug)
-            for ug in range(n_ug):
-                ug_pheromone = pheromone_matrix[:, ug]
-                position_pheromone = np.argmax(ug_pheromone)
-                best_ant[ug] = position_pheromone
-            self.best_individual_evolution.append(best_ant)
+            check_evolution = False
+            if check_evolution:
+                best_ant = np.zeros(n_ug)
+                for ug in range(n_ug):
+                    ug_pheromone = pheromone_matrix[:, ug]
+                    position_pheromone = np.argmax(ug_pheromone)
+                    best_ant[ug] = position_pheromone
+                self.best_individual_evolution.append(best_ant)
 
         # save best individual through pheromone matrix
         best_ant = np.zeros(n_ug)
@@ -425,4 +429,56 @@ class MetaHeuristics(object):
                     else:  # do not have an available ug: spill this day
                         current_spill[day] += daily_ug_vt_max
                 # only need this after find the best
-        return current_spill
+        return current_spill, current_operation
+
+    @staticmethod
+    def calculate_hdp(n_ug, n_days, inflow, rfo,
+                      vt_data, individual_spilled, individual_operation, individual, maintenance):
+
+        individual_agenda = np.zeros(shape=(n_ug, n_days))
+        vt_array = np.array([vt_data.vt_max[ug] for ug in range(n_ug)])
+
+        # define individual agenda
+        for ug in range(n_ug):
+            start_day = int(individual['start_days'][ug])
+            maintenance_ug = int(maintenance[ug])
+            individual_agenda[ug, start_day: start_day + maintenance_ug] = 1
+            individual_operation[ug, start_day: start_day + maintenance_ug] = 0
+
+        # calculate penalized spill
+        penalized_spill = np.zeros(n_days)
+        for day in range(n_days):
+            daily_turbined = sum(individual_operation[:, day] * vt_array[:, day])
+            daily_capacity = sum(vt_array[:, day])
+            daily_inflow = inflow[day]
+            if daily_capacity > daily_inflow:
+                penalized_spill[day] = daily_inflow - daily_turbined
+            else:
+                penalized_spill[day] = daily_capacity - daily_turbined
+
+        # calculate HDF and HDP
+        hdf = np.zeros(n_days)
+        hdp = np.zeros(n_days)
+
+        vt_rfo = np.zeros(n_days)
+        vt_man = np.zeros(n_days)
+
+        for day in range(n_days):
+            for ug in range(n_ug):
+                vt_rfo[day] += rfo[ug, day] * vt_array[ug, day]
+                vt_man[day] += individual_agenda[ug, day] * vt_array[ug, day]
+
+            if vt_rfo[day] - penalized_spill[day] >= 0:
+                nt = penalized_spill[day] / vt_array[49, day]
+                hdf[day] = nt * 24
+
+            if vt_rfo[day] - penalized_spill[day] < 0:
+
+                n = penalized_spill[day] / vt_array[49, day]
+                nt = vt_rfo[day] / vt_array[49, day]
+                nr = n - nt
+
+                hdf[day] = nt * 24
+                hdp[day] = nr * 24
+
+        return hdp
