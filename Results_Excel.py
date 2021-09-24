@@ -8,7 +8,7 @@ from os import path
 
 class Results(object):
 
-    def __init__(self, Indicadores, UHE_Data, Agenda, path_maintenance):
+    def __init__(self, Indicadores, UHE_Data, Agenda, path_maintenance, n_days, initial_date):
 
         if not path.exists('Excel_Results'):
             os.makedirs('Excel_Results')
@@ -20,6 +20,9 @@ class Results(object):
         self.agenda_manut_df = None
         self.cronograma_manut = None
 
+        self.n_days = n_days
+        self.initial_date = initial_date
+
         self.template_samug(Indicadores.HDP, Indicadores.HDF, UHE_Data.lista_turbinas)
         self.buid_results_check(UHE_Data.lista_turbinas, Agenda.Vertido, Agenda.Turbinado, UHE_Data.vaz_afl,
                                 Indicadores.HDF_mes, Indicadores.HDP_mes,
@@ -27,7 +30,8 @@ class Results(object):
         self.relatorio_manutencao(Agenda.Agenda, path_maintenance)
 
     def template_samug(self, HDF, HDP, lista_turbinas):
-        Num_Dias = 365
+        Num_Dias = self.n_days
+        Num_Turbinas = 50
 
         hdf_diario_df = pd.DataFrame(HDF, columns=['HDF'])
         hdp_diario_df = pd.DataFrame(HDP, columns=['HDP'])
@@ -47,14 +51,15 @@ class Results(object):
                 Grupo.append(valor["Grupo"])
 
         # ALIMENTANDO COM AS DATAS
-        data = date(2019, 1, 1)
+        data = self.initial_date
+        #data = initial_date
         lista_datas = []
-        for t in range(365):
-            for tb in range(50):
+        for t in range(Num_Dias):
+            for tb in range(Num_Turbinas):
                 lista_datas.append(data)
             data = data + timedelta(days=1)
             lista_datas_nova = []
-        for i in range(365 * 50):
+        for i in range(Num_Dias * Num_Turbinas):
             data = lista_datas[i]
             data = data.strftime('%d/%m/%Y')
             lista_datas_nova.append(data)
@@ -70,21 +75,21 @@ class Results(object):
 
         # insere número do ons de forma iterativa SIMULAÇÂO FID 1, 2, 3...
         list_n_ons_1 = []
-        for i in np.arange(1, 365 * 50 + 1):
+        for i in np.arange(1, Num_Dias * Num_Turbinas + 1):
             txt = 'SIMULACAO FID ' + str(i)
             list_n_ons_1.append(txt)
         samug_df_hdf['Nº ONS'] = list_n_ons_1
 
         # CALCULADO disponibilidade
-        horas_disponivel_dia = 12 * 50
+        horas_disponivel_dia = 12 * Num_Turbinas
         percentual_disponibilidade_diaria = []
-        for t in range(365):
+        for t in range(Num_Dias):
             valor = 1 - (hdf_diario_df['HDF'][t] / horas_disponivel_dia)
             percentual_disponibilidade_diaria.append(valor)
 
         disponibilidade_diaria = []
-        for t in range(365):
-            for tb in range(50):
+        for t in range(Num_Dias):
+            for tb in range(Num_Turbinas):
                 if lista_turbinas[tb]['Grupo'] == '4_pas':
                     valor = percentual_disponibilidade_diaria[t] * 73.290
                     disponibilidade_diaria.append(valor)
@@ -96,7 +101,7 @@ class Results(object):
         # FAZENDO CALSSIFICAÇÃO
         lista_condicao_operativa = []
         lista_origem = []
-        for i in range(365 * 50):
+        for i in range(Num_Dias * Num_Turbinas):
             if (samug_df_hdf['Disponibilidade(MW)'][i] == 73.290 or samug_df_hdf['Disponibilidade(MW)'][i] == 69.590):
                 lista_condicao_operativa.append('NOR')
                 lista_origem.append('')
@@ -107,7 +112,7 @@ class Results(object):
         samug_df_hdf['Origem'] = lista_origem
 
         lista_tempo_corrigido = []
-        for i in range(365 * 50):
+        for i in range(Num_Dias * Num_Turbinas):
             if Grupo[i] == '4_pas':
                 valor = (1 - (samug_df_hdf['Disponibilidade(MW)'][i] / 73.290)) * samug_df_hdf['Tempo'][i]
                 lista_tempo_corrigido.append(valor)
@@ -128,26 +133,26 @@ class Results(object):
         # ALIMENTANDO COLUNAS PADROZINADAS
         samug_df_hdp['Equipamento'] = Turbinas
         samug_df_hdp['Estado Operativo'] = 'LIG'
-        samug_df_hdp['Hora Inicio Verificada'] = '00:00'
+        samug_df_hdp['Hora Inicio Verificada'] = '12:00'
         samug_df_hdp['Validação Agente'] = 'NOV'
         samug_df_hdp['Tempo'] = 720.
 
         # insere número do ons de forma iterativa SIMULAÇÂO FID 1, 2, 3...
         list_n_ons_2 = []
-        for i in np.arange((365 * 50) + 1, (365 * 50 * 2) + 1):
+        for i in np.arange((Num_Dias * Num_Turbinas) + 1, (Num_Dias * Num_Turbinas * 2) + 1):
             txt = 'SIMULACAO FID ' + str(i)
             list_n_ons_2.append(txt)
         samug_df_hdp['Nº ONS'] = list_n_ons_2
 
-        horas_disponivel_dia = 12 * 50
+        horas_disponivel_dia = 12 * Num_Turbinas
         percentual_disponibilidade_diaria = []
-        for t in range(365):
+        for t in range(Num_Dias):
             valor = 1 - (hdp_diario_df['HDP'][t] / horas_disponivel_dia)
             percentual_disponibilidade_diaria.append(valor)
 
         disponibilidade_diaria = []
-        for t in range(365):
-            for tb in range(50):
+        for t in range(Num_Dias):
+            for tb in range(Num_Turbinas):
                 if (lista_turbinas[tb]['Grupo'] == '4_pas'):
                     valor = percentual_disponibilidade_diaria[t] * 73.290
                     disponibilidade_diaria.append(valor)
@@ -159,7 +164,7 @@ class Results(object):
 
         lista_condicao_operativa = []
         lista_origem = []
-        for i in range(365 * 50):
+        for i in range(Num_Dias * Num_Turbinas):
             if (samug_df_hdp['Disponibilidade(MW)'][i] == 73.29):
                 lista_condicao_operativa.append('NOR')
                 lista_origem.append('')
@@ -174,7 +179,7 @@ class Results(object):
         samug_df_hdp['Origem'] = lista_origem
 
         lista_tempo_corrigido = []
-        for i in range(365 * 50):
+        for i in range(Num_Dias * Num_Turbinas):
             if Grupo[i] == '4_pas':
                 valor = (1 - (samug_df_hdp['Disponibilidade(MW)'][i] / 73.290)) * samug_df_hdp['Tempo'][i]
                 lista_tempo_corrigido.append(valor)
@@ -191,24 +196,24 @@ class Results(object):
 
         self.samug_df = samug_df
 
-    def buid_results_check(self,lista_turbinas, VV, VT, VAZ_AFL, HDF_mes, HDP_mes, N_Rodadas, dr_man, Agenda):
+    def buid_results_check(self, lista_turbinas, VV, VT, VAZ_AFL, HDF_mes, HDP_mes, N_Rodadas, dr_man, Agenda):
         ###################################
         ##### RESULTADOS em EXCEL #########
         ###################################
         Num_Turbinas = 50
-        Num_Dias = 365
-        Num_Meses = 12
+        Num_Dias = self.n_days
+        Num_Meses = int(self.n_days/30)
 
         nome_turbinas = []
         for t, valor in enumerate(lista_turbinas):
             nome_turbinas.append(valor["Nome"])
 
-        self.results_1_df = pd.DataFrame(columns=['DIA', 'VV', 'VT', 'VAZ_AFL'])
+        self.results_1_df = pd.DataFrame(columns=['DIA', 'Volume Vertido', 'Volume Turbinado', 'Volume Turbinado'])
         for t in range(Num_Dias):
             self.results_1_df['DIA'] = range(Num_Dias)
-            self.results_1_df['VV'] = VV
-            self.results_1_df['VT'] = VT
-            self.results_1_df['VAZ_AFL'] = VAZ_AFL
+            self.results_1_df['Volume Vertido'] = VV
+            self.results_1_df['Volume Turbinado'] = VT
+            self.results_1_df['Volume Turbinado'] = VAZ_AFL
 
         self.results_2_df = pd.DataFrame(columns=['MÊS', 'HDF', 'HDP'])
         for t in range(Num_Meses):
@@ -218,7 +223,7 @@ class Results(object):
 
         list_columns = []
         for i in range(N_Rodadas):
-            txt = "DM_" + str(i + 1)
+            txt = "Duração da Manutenção " + str(i + 1)
             list_columns.append(txt)
         self.results_3_df = pd.DataFrame(dr_man, columns=list_columns)
         self.results_3_df.astype(int)
@@ -250,7 +255,7 @@ class Results(object):
 
     def relatorio_manutencao(self, Agenda, path_maintenance):
         Num_Turbinas = 50
-        Num_Dias = 365
+        Num_Dias = self.n_days
 
         # MONTANDO LISTA COM APENAS DIAS QUE ESTÁ PROGRAMADO MANUTENÇÃO
         days_manut = []
@@ -298,14 +303,15 @@ class Results(object):
                     list_ug.append(txt)
 
         # LISTA IDENTIFICANDO QUAL DATA REPRESENTA CADA ÍNDICE
-        data = date(2019, 1, 1)
+        data = self.initial_date
+        # data = initial_date
         lista_ano = []
-        for t in range(365):
+        for t in range(Num_Dias):
             lista_ano.append(data)
             data = data + timedelta(days=1)
 
         lista_ano_nova = []
-        for i in range(365):
+        for i in range(Num_Dias):
             data = lista_ano[i]
             data = data.strftime('%d/%m/%Y')
             lista_ano_nova.append(data)

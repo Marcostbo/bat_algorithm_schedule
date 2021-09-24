@@ -7,7 +7,7 @@ import matplotlib.pyplot as plt
 
 class Leitura(object):
 
-    def __init__(self, path_vazao, path_manutencao, path_rfo, path_pdf, calendario_def):
+    def __init__(self, path_vazao, path_manutencao, path_rfo, path_pdf, calendario_def, year_array):
         self.vaz_afl = None
         self.vaz_hist = None
         self.dr_man = None
@@ -16,11 +16,12 @@ class Leitura(object):
         self.rfo_dia = None
         self.manut_def = None
         self.lista_turbinas = None
+        self.year_array = year_array
 
         self.ler_turbinas()
-        self.ler_vaz_afl(path_vazao)
+        self.ler_vaz_afl(path_vazao, year_array)
         self.ler_dr_man(path_manutencao)
-        self.ler_rfo_pdf(path_rfo, path_pdf)
+        self.ler_rfo_pdf(path_rfo, path_pdf, year_array)
         self.ler_manut_def_array(calendario_def)
 
     def ler_turbinas(self):
@@ -128,7 +129,7 @@ class Leitura(object):
 
         self.lista_turbinas = lista_turbinas
 
-    def ler_vaz_afl(self, path):
+    def ler_vaz_afl(self, path, year_array):
 
         df = pd.read_excel(path, sheet_name='VazaoDados')
 
@@ -157,7 +158,13 @@ class Leitura(object):
         df = df.interpolate()  # Interpolação
 
         self.vaz_hist = df
-        self.vaz_afl = df['Media'].values
+        vaz_afl = []
+        vaz_afl_yearly = df['Media'].values
+        for day in year_array:
+            current_vaz = vaz_afl_yearly[day]
+            vaz_afl.append(current_vaz)
+
+        self.vaz_afl = vaz_afl
 
     def ler_dr_man(self, path):
         Num_Turbinas = 50
@@ -288,7 +295,7 @@ class Leitura(object):
 
         return dados_gerais
 
-    def ler_rfo_pdf(self, path_rfo, path_pdf):
+    def ler_rfo_pdf(self, path_rfo, path_pdf, year_array):
 
         rfo_pdf = self.build_rfo_pdf(path_pdf)
         self.rfo_pdf = rfo_pdf
@@ -328,7 +335,11 @@ class Leitura(object):
                             dia_mes = dia_sorteado + fim_dias_mes[mes - 1] - 1
                             matriz_ano[tb, dia_mes] = 1
 
-        self.rfo_dia = matriz_ano
+        final_matrix_ano = np.zeros(shape=(Num_Turbinas, len(year_array)))
+        for d, day in enumerate(year_array):
+            final_matrix_ano[:, d] = matriz_ano[:, day]
+
+        self.rfo_dia = final_matrix_ano
 
     def ler_manut_def_array(self, Agenda_def):
         self.manut_def = Agenda_def

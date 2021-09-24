@@ -48,6 +48,11 @@ class plota_Agenda(object):
                 no = sum(Operacao[:, t])  # Operação
                 nr = sum(Agenda_rfo[:, t])  # RFO
                 nm = sum(Agenda[:, t])  # Manutenção
+
+                if int(no + nr + nm) > 50:
+                    diff = int(no + nr + nm) - 50
+                    nr = nr - diff
+
                 nf = Num_Turbinas - no - nr - nm  # Fora de Operação
 
                 npp = no + nm  # Manutenção para Plot Fill Between

@@ -7,7 +7,7 @@ from termcolor import colored
 class MetaHeuristics(object):
 
     def __init__(self, uhe_data, n_ug, n_days, maintenance_round, maintenance_duration, previous_calendar,
-                 n_ind):
+                 n_ind, prohibited_start, prohibited_end, full_year, changed_year):
 
         self.start_individuals = {}
         self.possible_days = None
@@ -18,14 +18,18 @@ class MetaHeuristics(object):
         self.best_bat_result = None
         self.best_individual_evolution = []
 
+        self.prohibited_start = prohibited_start
+        self.prohibited_end = prohibited_end
+
         self.n_ug = n_ug
         self.n_days = n_days
         self.current_round = maintenance_round
         self.maintenance_duration = maintenance_duration
 
-        self.initialize_individual(uhe_data=uhe_data, previous_calendar=previous_calendar, n_ind=n_ind)
+        self.initialize_individual(uhe_data=uhe_data, previous_calendar=previous_calendar,
+                                   n_ind=n_ind, full_year=full_year, changed_year=changed_year)
 
-    def initialize_individual(self, uhe_data, previous_calendar, n_ind):
+    def initialize_individual(self, uhe_data, previous_calendar, n_ind, full_year, changed_year):
         print('Building initial individual...')
         dict_of_days = {}
         maintenance_round = self.current_round
@@ -63,15 +67,30 @@ class MetaHeuristics(object):
                 if self.possible_days[ug, day] == 0:
                     list_of_days.append(day)
 
-            lim_1 = 150
-            lim_2 = 10
-            filter_1 = [x for x in list_of_days if lim_1 <= x]
-            filter_2 = [x for x in list_of_days if lim_2 >= x]
-            # filter_2 = []
+            # Apply prohibited zone filter to possible days
 
-            dict_of_days[ug] = filter_2 + filter_1
-            if not dict_of_days[ug]:
-                dict_of_days[ug] = list_of_days
+            if not changed_year:
+
+                lim_1 = self.prohibited_start
+                lim_2 = self.prohibited_end
+
+                filter_1 = [x for x in list_of_days if lim_2 <= x]
+                filter_2 = [x for x in list_of_days if lim_1 >= x]
+
+                dict_of_days[ug] = filter_2 + filter_1
+                if not dict_of_days[ug]:
+                    dict_of_days[ug] = list_of_days
+
+            if changed_year:
+                lim_1 = self.prohibited_start
+                lim_2 = self.prohibited_end
+
+                filter_1 = [x for x in list_of_days if lim_2 <= x]
+                filter_2 = [x for x in list_of_days if lim_1 >= x]
+
+                dict_of_days[ug] = filter_2 + filter_1
+                if not dict_of_days[ug]:
+                    dict_of_days[ug] = list_of_days
 
         # Initialize heuristic individuals
         self.dict_of_days = dict_of_days
