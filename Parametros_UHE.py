@@ -139,6 +139,7 @@ class Leitura(object):
 
         ano_ini = 1968
         ano_fim = 2019
+        parcela_vazao = 0.90
         nanos = ano_fim - ano_ini + 1
 
         for k in range(nanos):
@@ -164,7 +165,7 @@ class Leitura(object):
             current_vaz = vaz_afl_yearly[day]
             vaz_afl.append(current_vaz)
 
-        self.vaz_afl = vaz_afl
+        self.vaz_afl =  np.array(vaz_afl)*parcela_vazao
 
     def ler_dr_man(self, path):
         Num_Turbinas = 50

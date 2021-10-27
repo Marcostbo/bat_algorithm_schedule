@@ -2,8 +2,9 @@ import numpy as np
 
 class Calculo_Indicadores(object):
 
-    def __init__(self, Agenda, Dados_UHE, Dados_VT):
+    def __init__(self, Agenda, Dados_UHE, Dados_VT, remove_rfo):
         Num_Dias = 365
+        remove_rfo = remove_rfo
         self.HDF = np.zeros(Num_Dias)
         self.HDP = np.zeros(Num_Dias)
         self.HDF_mes = np.zeros(Num_Dias)
@@ -11,9 +12,9 @@ class Calculo_Indicadores(object):
         self.HDF_acum = np.zeros(Num_Dias)
         self.HDP_acum = np.zeros(Num_Dias)
 
-        self.Calc_Indic_Mes(Agenda.Agenda, Dados_UHE.rfo_dia, Dados_VT.vt_max, Dados_UHE.vaz_afl, Agenda.Turbinado, Num_Dias)
+        self.Calc_Indic_Mes(Agenda.Agenda, Dados_UHE.rfo_dia, Dados_VT.vt_max, Dados_UHE.vaz_afl, Agenda.Turbinado, Num_Dias, remove_rfo)
 
-    def Calc_Indic_Mes(self, agenda_ofi, agenda_rfo, vt_UG, VAZ_AFL, VT, Num_Dias):
+    def Calc_Indic_Mes(self, agenda_ofi, agenda_rfo, vt_UG, VAZ_AFL, VT, Num_Dias, remove_rfo):
 
         # Calcula vertimento que pode ser penalizado
         Num_Turbinas = 50
@@ -42,8 +43,11 @@ class Calculo_Indicadores(object):
                 vt_rfo[t] += agenda_rfo[tb, t] * vt_max[tb, t]  # Volume turbinado perdido por RFO
                 vt_man[t] += agenda_ofi[tb, t] * vt_max[tb, t]  # Volume turbinado perdido por MANUTENÇÃO
 
+        if remove_rfo:
+            vt_rfo = np.zeros(shape=(Num_Dias))
+
         for t in range(Num_Dias):
-            if vt_rfo[t] - VV_pen[t] >= 0:  # Vertimento vira HDF
+            if vt_rfo[t] - VV_pen[t] > 0:  # Vertimento vira HDF
                 if vt_max[12, t] > 0:  # QUANDO OPERA COM UG DE 4 E 5 PÁS
                     nt = VV_pen[t] / ((vt_max[0, t] + vt_max[12, t])/2)  # MÉDIA DE TURB_MAX ENTRE UG DE 4 E 5 PÁS
                     HDF[t] = nt * 24
@@ -51,7 +55,7 @@ class Calculo_Indicadores(object):
                     nt = VV_pen[t] / vt_max[0, t]   # MÉDIA DE TURB_MAX ENTRE UG DE 4 E 5 PÁS
                     HDF[t] = nt * 24
 
-            if vt_rfo[t] - VV_pen[t] < 0:  # Vertimento vira HDF e HDP
+            if vt_rfo[t] - VV_pen[t] <= 0:  # Vertimento vira HDF e HDP
                 if vt_max[12, t] > 0:  # QUANDO OPERA COM UG DE 4 E 5 PÁS
                     n = VV_pen[t] / ((vt_max[0, t] + vt_max[12, t])/2)  # Número total de turbinas
                     nt = vt_rfo[t] / ((vt_max[0, t] + vt_max[12, t])/2)  # Número máximo para HDF

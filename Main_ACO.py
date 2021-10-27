@@ -101,6 +101,10 @@ n_rounds = maintenance_duration.shape[1]     # number of maintenance rounds
 maintenance_result = np.zeros(shape=(n_ug, n_rounds))
 defined_calendar = np.zeros(shape=(n_ug, n_days))
 
+remove_rfo = True
+if remove_rfo:
+   UHE_Data.rfo_dia = np.zeros(shape=(n_ug, n_days))
+
 # first optimization
 Agenda = Optimize_Operation(Dados_UHE=UHE_Data, Dados_VT=VT_Data, calendar=defined_calendar,
                             previous_calendar=np.zeros(shape=(n_ug, n_days)), n_days=n_days, n_ug=n_ug)
@@ -182,7 +186,7 @@ if check_individual_evolution:
 
 # HDF and HDP indexes
 
-Indexes = Calculo_Indicadores(Agenda, UHE_Data, VT_Data)
+Indexes = Calculo_Indicadores(Agenda, UHE_Data, VT_Data, remove_rfo)
 print("HDF: ", sum(Indexes.HDF_mes))
 print("HDP: ", sum(Indexes.HDP_mes))
 
