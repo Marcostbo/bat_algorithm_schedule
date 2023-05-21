@@ -7,7 +7,7 @@ from termcolor import colored
 class MetaHeuristics(object):
 
     def __init__(self, uhe_data, n_ug, n_days, maintenance_round, maintenance_duration, previous_calendar,
-                 n_ind, prohibited_start, prohibited_end, full_year, changed_year):
+                 n_ind, prohibited_start, prohibited_end, full_year, changed_year, create_start_individual):
 
         self.start_individuals = {}
         self.possible_days = None
@@ -26,8 +26,9 @@ class MetaHeuristics(object):
         self.current_round = maintenance_round
         self.maintenance_duration = maintenance_duration
 
-        self.initialize_individual(uhe_data=uhe_data, previous_calendar=previous_calendar,
-                                   n_ind=n_ind, full_year=full_year, changed_year=changed_year)
+        if create_start_individual:
+            self.initialize_individual(uhe_data=uhe_data, previous_calendar=previous_calendar,
+                                       n_ind=n_ind, full_year=full_year, changed_year=changed_year)
 
     def initialize_individual(self, uhe_data, previous_calendar, n_ind, full_year, changed_year):
         print('Building initial individual...')
@@ -253,7 +254,7 @@ class MetaHeuristics(object):
             iteration = iteration + 1
 
             # save best individual through pheromone matrix for each generation
-            check_evolution = False
+            check_evolution = True
             if check_evolution:
                 best_ant = np.zeros(n_ug)
                 for ug in range(n_ug):
@@ -488,13 +489,13 @@ class MetaHeuristics(object):
                 vt_man[day] += individual_agenda[ug, day] * vt_array[ug, day]
 
             if vt_rfo[day] - penalized_spill[day] >= 0:
-                nt = penalized_spill[day] / vt_array[49, day]
+                nt = penalized_spill[day] / vt_array[n_ug - 1, day]
                 hdf[day] = nt * 24
 
             if vt_rfo[day] - penalized_spill[day] < 0:
 
-                n = penalized_spill[day] / vt_array[49, day]
-                nt = vt_rfo[day] / vt_array[49, day]
+                n = penalized_spill[day] / vt_array[n_ug - 1, day]
+                nt = vt_rfo[day] / vt_array[n_ug - 1, day]
                 nr = n - nt
 
                 hdf[day] = nt * 24
