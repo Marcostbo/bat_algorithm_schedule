@@ -14,11 +14,11 @@ from datetime import date
 
 # User Data Input #
 
-initial_date = date(2021, 8, 1)  # start day of the simulation
-final_date = date(2022, 7, 31)   # final day of the simulation
+# initial_date = date(2021, 8, 1)  # start day of the simulation
+# final_date = date(2022, 7, 31)   # final day of the simulation
 
-# initial_date = date(2021, 1, 1)  # start day of the simulation
-# final_date = date(2021, 12, 31)   # final day of the simulation
+initial_date = date(2021, 1, 1)  # start day of the simulation
+final_date = date(2021, 12, 31)   # final day of the simulation
 
 time_delta = final_date - initial_date
 days_range = time_delta.days + 1  # number of simulation days
@@ -43,11 +43,11 @@ else:
 
 # Are there any prohibited areas for maintenance?
 
-# prohibited_start_day = date(2021, 1, 10)
-# prohibited_end_day = date(2021, 6, 1)
+prohibited_start_day = date(2021, 1, 10)
+prohibited_end_day = date(2021, 5, 1)
 
-prohibited_start_day = date(2022, 1, 10)
-prohibited_end_day = date(2022, 6, 1)
+# prohibited_start_day = date(2022, 1, 10)
+# prohibited_end_day = date(2022, 6, 1)
 
 time_delta_from_first_day = prohibited_start_day - initial_date
 time_delta_from_final_day = prohibited_end_day - initial_date
@@ -96,14 +96,15 @@ n_gen = 20                   # denotes number of generations (iterations)
 n_lost = 20  # rate of individuals that don't follow the pheromone
 rho = 0.2    # evaporation rate
 
-n_rounds = maintenance_duration.shape[1]     # number of maintenance rounds
+# n_rounds = maintenance_duration.shape[1]     # number of maintenance rounds
+n_rounds = 1
 
 maintenance_result = np.zeros(shape=(n_ug, n_rounds))
 defined_calendar = np.zeros(shape=(n_ug, n_days))
 
 remove_rfo = True
 if remove_rfo:
-   UHE_Data.rfo_dia = np.zeros(shape=(n_ug, n_days))
+    UHE_Data.rfo_dia = np.zeros(shape=(n_ug, n_days))
 
 # first optimization
 Agenda = Optimize_Operation(Dados_UHE=UHE_Data, Dados_VT=VT_Data, calendar=defined_calendar,
@@ -123,7 +124,7 @@ for current_round in range(n_rounds):
                          maintenance_round=maintenance_round, maintenance_duration=maintenance_duration,
                          previous_calendar=defined_calendar, n_ind=n_ind,
                          prohibited_start=prohibited_start, prohibited_end=prohibited_end,
-                         full_year=full_year, changed_year=changed_year)
+                         full_year=full_year, changed_year=changed_year, create_start_individual=True)
 
     start = timeit.default_timer()
     ACO.ant_colony_optimization(uhe_data=UHE_Data, vt_data=VT_Data, n_gen=n_gen, n_ind=n_ind, n_lost=n_lost, rho=rho,
@@ -209,7 +210,7 @@ if plot_indexes:
     plt.show()
 
 # export excel results
-export_excel = True
+export_excel = False
 
 if export_excel:
     Results(Indicadores=Indexes, UHE_Data=UHE_Data, Agenda=Agenda, path_maintenance=path_maintenance,
