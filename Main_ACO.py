@@ -154,7 +154,7 @@ Agenda = Optimize_Operation(Dados_UHE=UHE_Data, Dados_VT=VT_Data, calendar=defin
                             previous_calendar=np.zeros(shape=(n_ug, n_days)), n_days=n_days, n_ug=n_ug)
 
 plota_Agenda(Agenda.Turbinado, Agenda.Vertido, UHE_Data.vaz_afl, Agenda.Operacao, Agenda.Agenda, UHE_Data.rfo_dia,
-             vert_turb=True, ug_op_man=True, vert_n_turb=False, calendario=False)
+             vert_turb=True, ug_op_man=True, vert_n_turb=False, calendario=True)
 
 # evaluate best individual evolution
 

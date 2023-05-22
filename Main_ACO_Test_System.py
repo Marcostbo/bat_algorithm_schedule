@@ -7,7 +7,7 @@ from Agenda_OTM import Optimize_Operation
 # Case test data
 
 n_days = 36
-n_ug = 5
+n_ug = 2
 n_rounds = 1
 
 maintenance_duration = [[5, ],
@@ -42,7 +42,7 @@ vaz_afl_aux = [19883.921589, 20203.761685, 20461.283812, 20601.945018, 20905.857
 
 vaz_afl = []
 for i in range(int(len(vaz_afl_aux))):
-    aux = vaz_afl_aux[i] / 10.
+    aux = vaz_afl_aux[i] / 20.
     vaz_afl.append(aux)
 
 vt_max = [[489, 493, 496, 498, 502, 507, 513, 517, 521, 525, 528, 531, 534, 537, 540, 545, 550, 556, 561, 565, 571, 577,

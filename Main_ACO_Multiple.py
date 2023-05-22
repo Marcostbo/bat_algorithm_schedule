@@ -11,6 +11,12 @@ from Simula_FID import Calculo_Indicadores
 from Results_Excel import Results
 import matplotlib.pyplot as plt
 from datetime import date
+import seaborn as sns
+import matplotlib as mpl
+
+mpl.rcParams["legend.loc"] = 'upper right'
+mpl.rcParams['figure.figsize'] = (10, 6)
+mpl.rcParams['font.size'] = 18
 
 # User Data Input #
 
@@ -121,7 +127,7 @@ ACO_base = MetaHeuristics(uhe_data=UHE_Data, n_ug=n_ug, n_days=n_days,
                           prohibited_start=prohibited_start, prohibited_end=prohibited_end,
                           full_year=full_year, changed_year=changed_year, create_start_individual=True)
 
-number_of_runs = 10
+number_of_runs = 100
 maintenance_result = np.zeros(shape=(n_ug, number_of_runs))
 
 for run in range(number_of_runs):
@@ -150,6 +156,7 @@ for run in range(number_of_runs):
         maintenance_result[:, run] = ACO.best_individual
 
 hdps = []
+vertimentos = []
 
 for run in range(number_of_runs):
     maintenance = maintenance_result[:, run]
@@ -167,3 +174,24 @@ for run in range(number_of_runs):
 
     Indexes = Calculo_Indicadores(Agenda, UHE_Data, VT_Data, remove_rfo)
     hdps.append(sum(Indexes.HDP_mes))
+    vertimentos.append(sum(Agenda.Vertido))
+
+my_dict_vertimentos = {i: vertimentos.count(i) for i in vertimentos}
+my_dict_hdps = {i: hdps.count(i) for i in hdps}
+
+mean = '%.2f' % np.mean(hdps)
+std = '%.2f' % np.std(hdps)
+median = '%.2f' % np.median(hdps)
+
+sns.set_theme(style="ticks")
+sns.boxplot(x=hdps)
+plt.plot([], [], ' ', label=f"$\mu$ = {mean}")
+plt.plot([], [], ' ', label=f"$\sigma$ = {std}")
+plt.plot([], [], ' ', label=f"Mediana = {median}")
+plt.xlabel('Horas de Parada Programada', fontsize=16)
+plt.ylabel('Caso II', fontsize=16)
+plt.xticks(fontsize=14)
+plt.yticks(fontsize=14)
+plt.legend(handlelength=0, handletextpad=0, fancybox=True, prop={"size": 16})
+plt.savefig("caso_2_boxplot.pdf", bbox_inches='tight')
+plt.show()

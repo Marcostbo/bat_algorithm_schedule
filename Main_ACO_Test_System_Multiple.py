@@ -3,11 +3,19 @@ from dataclasses import dataclass
 import timeit
 from meta_heuristics import MetaHeuristics
 from Agenda_OTM import Optimize_Operation
+import matplotlib.pyplot as plt
+import seaborn as sns
+import matplotlib as mpl
+
+mpl.rcParams["legend.loc"] = 'upper right'
+mpl.rcParams['figure.figsize'] = (10, 6)
+mpl.rcParams['font.size'] = 18
+
 
 # Case test data
 
 n_days = 36
-n_ug = 5
+n_ug = 3
 n_rounds = 1
 
 maintenance_duration = [[5, ],
@@ -42,7 +50,7 @@ vaz_afl_aux = [19883.921589, 20203.761685, 20461.283812, 20601.945018, 20905.857
 
 vaz_afl = []
 for i in range(int(len(vaz_afl_aux))):
-    aux = vaz_afl_aux[i] / 10.
+    aux = vaz_afl_aux[i] / 20.
     vaz_afl.append(aux)
 
 vt_max = [[489, 493, 496, 498, 502, 507, 513, 517, 521, 525, 528, 531, 534, 537, 540, 545, 550, 556, 561, 565, 571, 577,
@@ -83,7 +91,7 @@ maintenance_duration = UHE_Data.dr_man
 n_ug = n_ug                  # number of generating units
 n_days = n_days              # number of days
 ind_size = n_ug              # individual size
-n_ind = 100                  # denotes population size
+n_ind = 200                  # denotes population size
 n_gen = 20                   # denotes number of generations (iterations)
 
 n_lost = 20  # rate of individuals that don't follow the pheromone
@@ -151,3 +159,33 @@ for run in range(number_of_runs):
     Agenda = Optimize_Operation(Dados_UHE=UHE_Data, Dados_VT=VT_Data, calendar=defined_calendar,
                                 previous_calendar=np.zeros(shape=(n_ug, n_days)), n_days=n_days, n_ug=n_ug)
     vertimentos.append(sum(Agenda.Vertido))
+
+# vertimentos_plot = [v for v in vertimentos if v > 9922]
+days = np.arange(1, 37)
+plt.plot(vaz_afl, linewidth=3, label='Vazão Afluente')
+plt.plot(vt_max[0], linewidth=3, label='Vazão Turb. Máx')
+plt.xlabel('Dia', fontsize=16)
+plt.ylabel('Vazão [$m^3/s$]', fontsize=16)
+plt.xticks(fontsize=14)
+plt.yticks(fontsize=14)
+plt.legend(prop={"size": 16})
+plt.grid(True)
+plt.savefig("vazao_teste.pdf", format="pdf", bbox_inches="tight")
+plt.show()
+
+mean = '%.2f' % np.mean(vertimentos)
+std = '%.2f' % np.std(vertimentos)
+median = '%.2f' % np.median(vertimentos)
+
+sns.set_theme(style="ticks")
+sns.boxplot(x=vertimentos)
+plt.plot([], [], ' ', label=f"$\mu$ = {mean}")
+plt.plot([], [], ' ', label=f"$\sigma$ = {std}")
+plt.plot([], [], ' ', label=f"Mediana = {median}")
+plt.xlabel('Vertimento [$m^3$]', fontsize=16)
+plt.ylabel('Caso I', fontsize=16)
+plt.xticks(fontsize=14)
+plt.yticks(fontsize=14)
+plt.legend(handlelength=0, handletextpad=0, fancybox=True, prop={"size": 16})
+plt.savefig("caso_1_boxplot.pdf", bbox_inches='tight')
+plt.show()
